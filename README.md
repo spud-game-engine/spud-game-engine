@@ -1,6 +1,6 @@
 # Spud Game Engine
 
-Welcome to the Spud game enjine git repository!
+Welcome to the Spud Game Engine git repository!
 
 The Spud Game Engine plans to be a highly modular (and highly integrated) game
 engine that fixes these problems that I always seem to encounter in JavaScript
