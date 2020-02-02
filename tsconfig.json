@@ -1,0 +1,39 @@
+{
+	"compilerOptions": {
+		"target": "es2017",//I'm gonna keep it at the newest, most env support as according to https://kangax.github.io/compat-table (checked whenever_I_feel_like_it|monthy|yearly|whenever_I_do_a_big_update) I also take env usage stats into account.
+		//The only feature that most browsers don't seem to have in es2017 as of the time of writing, is shared memory and atomics
+		"module":"commonjs",
+		
+		"declaration":true,
+		//"allowJs": true,
+		"outDir": "dist",
+		"strict":true,
+		//"checkJs":true,
+		"esModuleInterop":true,
+		//"sourceMap":true,//Both of these may bee a bad idea
+		//"declarationMap":true,
+
+		//"importHelpers": true,
+		/*if using this, also use
+    "tslib":"^1.10.0"
+		*/
+
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": false,//TODO: swap this later (12 problems on 13sep2019)
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"suppressExcessPropertyErrors": false,
+		"suppressImplicitAnyIndexErrors": false,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true
+	},
+	"include": [
+		"lib","test/*.*","index.ts"
+	]
+}
