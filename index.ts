@@ -61,13 +61,13 @@ export abstract class InputHandler {
 */
 export abstract class Physics {}
 /**
-* The abstract parent class of all renderers
+* A tool that lets users "see" the current game state.
 */
 export abstract class Renderer {
 	/**
-	* Update the game state. This can include things such as checking for
-	* physics events, updating animation frames, music, sound effects,
-	* checking keybindings, and more.
+	* Update the game state. This can include things such as checking
+	* for physics events, updating animation frames, music, sound
+	* effects, checking keybindings, and more.
 	*/
 	abstract prepare_next_frame:()=>undefined;
 	/**
@@ -108,13 +108,17 @@ export abstract class Stage {
 	* Get sprite by it's ID number
 	*/
 	abstract getByID(id:number):Sprite;
+	/**
+	* Change things about a sprite, such as where it is
+        */
 	abstract change:(id:number)=>Change;
 	/**
 	* The component that will display the game objects to the user.
 	*/
 	renderer:Renderer;
 	/**
-	* The component that sets the rules for how sprites can interact with oneanother.
+	* The component that sets the rules for how sprites can interact
+	* with oneanother.
 	*/
 	physics:Physics;
 	/**
@@ -198,7 +202,7 @@ export abstract class Game {
 	*/
 	abstract initStage(n:number):Stage;
 	/**
-	* Immedietly init and set the stage
+	* Immediately init and set the stage
 	*/
 	changeToStage(n:number) {
 		this.stage=this.initStage(n);
