@@ -5,14 +5,7 @@ console.log("Welcome to Spud Game Engine v"+versionStr+"!")
 * The abstract parent class of all variety of sprites
 */
 export abstract class Sprite {
-	/**
-	* The X-position of the sprite.
-	*/
-	x=0
-	/**
-	* The Y-position of the sprite.
-	*/
-	y=0
+	abstract location:number[];
 	//abstract eventStart(info:EventInfo):void;
 	//abstract eventEnd(info:EventInfo):void;
 	/**
@@ -91,9 +84,16 @@ export interface Change{
 * A container for Sprites that manages rendering and physics
 */
 export abstract class Stage {
-	constructor(renderer:Renderer,physics:Physics) {
+	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
 		this.renderer=renderer;
 		this.physics=physics;
+		for(let i in handlers) {
+			handlers[i].inputEventStart=this.inputEventStart;
+			handlers[i].inputEventEnd=this.inputEventEnd;
+
+			handlers[i].connectEvent=this.connectEvent;
+			handlers[i].disconnectEvent=this.disconnectEvent;
+		}
 	}
 	/**
 	* Iterate through the sprites
@@ -157,18 +157,12 @@ export abstract class Stage {
 /**
 * The base class for all categories of games to inherit from
 */
-export abstract class Game {
+export abstract class Game extends Stage {
 	/**
 	* Constructor for the [[Game]] base class
 	*/
-	constructor(handlers:InputHandler[]) {
-		for(let i in handlers) {
-			handlers[i].inputEventStart=this.inputEventStart;
-			handlers[i].inputEventEnd=this.inputEventEnd;
-
-			handlers[i].connectEvent=this.connectEvent;
-			handlers[i].disconnectEvent=this.disconnectEvent;
-		}
+	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
+		super(renderer,physics,handlers)
 		this.stage=this.initStage(0);
 		this.stage.renderer.render_next_frame();
 		//TODO: Initialize game loop and render loop
