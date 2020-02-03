@@ -1,89 +1,154 @@
 export let version:[number,number,number,string?]=[0,0,0]
-export let versionStr:string=version.slice(0,3).join(".")
-	.concat(version[3]||"")
+export let versionStr:string=version.slice(0,3).join(".").concat(version[3]||"")
 console.log("Welcome to Spud Game Engine v"+versionStr+"!")
 /**
- * The abstract parent class of all variety of sprites
- */
+* The abstract parent class of all variety of sprites
+*/
 export abstract class Sprite {
 	/**
 	* An array of all of the dementions (x, y, z...) and their properties
 	* (position, speed, velocity, acceleration...)
-        */
+	*/
 	abstract location:number[][];
+	abstract eventStart(info:EventInfo):void;
+	abstract eventEnd(info:EventInfo):void;
+	abstract inputEventStart(info:EventInfo):void;
+	abstract inputEventEnd(info:EventInfo):void;
+	abstract connectEvent(info:EventInfo):void;
+	abstract disconnectEvent(info:EventInfo):void;
+}
+export interface EventInfo{}
+/**
+* Handle for input
+*/
+export abstract class InputHandler {
+	abstract registerEventStart:(handler:(info:EventInfo)=>void)=>void;
+	abstract registerEventEnd:(handler:(info:EventInfo)=>void)=>void;
+	abstract registerInputEventStart:(handler:(info:EventInfo)=>void)=>void;
+	abstract registerInputEventEnd:(handler:(info:EventInfo)=>void)=>void;
+	abstract registerConnectEvent:(handler:(info:EventInfo)=>void)=>void;
+	abstract registerDisconnectEvent:(handler:(info:EventInfo)=>void)=>void;
 }
 /**
- * The abstract parent class of all collider implimentations
- * 
- * A collider serves two tasks:
- * 1. Keep track of all of the sprites, and
- * 2. Detarmine if they are "colliding"
- */
-export abstract class Collider {}
+* The abstract parent class of all collider implimentations
+*/
+export abstract class Physics {}
 /**
- * The abstract parent class of all renderers
- */
+* The abstract parent class of all renderers
+*/
 export abstract class Renderer {
-	constructor(collider:Collider) {
-		this.collider=collider;
-	}
-	collider:Collider;
 	/**
 	* Update the game state. This can include things such as checking for
-        * physics events, updating animation frames, music, sound effects,
-        * checking keybindings, and more.
-        */
+	* physics events, updating animation frames, music, sound effects,
+	* checking keybindings, and more.
+	*/
 	abstract prepare_next_frame:()=>undefined;
 	/**
 	* Display the current game state (frame) to the user.
-        */
+	*/
 	abstract render_current_frame:()=>undefined;
 	/**
 	* Prepare then immediately render the next frame
-        */
+	*/
 	render_next_frame() {
 		this.prepare_next_frame();
 		this.render_current_frame();
 	}
 }
 /**
- * A collider where all objects lie exactly in various positions on a grid.
- *
-export class Grid_Collider extends Collider {
-	private _grid:Sprite[][];
+ * A container for Sprites that manages rendering and physics
+ */
+export abstract class Stage {
+	constructor(renderer:Renderer,physics:Physics) {
+		this.renderer=renderer;
+		this.physics=physics;
+		this.sprites=[];
+	}
+	sprites:Sprite[];
 	/**
-	* The constructor for the [[Grid_Collider]] class.
-         * @param width the number of sprites wide
-         * @param height the number of sprites tall
-         *
-	constructor(width:number,height:number) {
-		super();
-		this._grid=new Array(height);
-		for (let i=0;i<this._grid.length;i++) {
-			this._grid[i]=new Array(width);
+	* The component that will display the game objects to the user.
+	*/
+	renderer:Renderer;
+	/**
+	* The component that sets the rules for how sprites can interact with oneanother.
+	*/
+	physics:Physics;
+	eventStart(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].eventStart(info);
 		}
 	}
-}//*/
+	eventEnd(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].eventEnd(info);
+		}
+	}
+	inputEventStart(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].inputEventStart(info);
+		}
+	}
+	inputEventEnd(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].inputEventEnd(info);
+		}
+	}
+	connectEvent(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].connectEvent(info);
+		}
+	}
+	disconnectEvent(info:EventInfo) {
+		for(let i in this.sprites) {
+			this.sprites[i].disconnectEvent(info);
+		}
+	}
+}
 /**
- * The base class for all categories of games to inherit from
- */
+* The base class for all categories of games to inherit from
+*/
 export abstract class Game {
 	/**
 	* Constructor for the [[Game]] base class
-        */
-	constructor(name:string,
-		    renderer:Renderer) {
-		console.log(name);
-		this.name=name;
-		this.renderer=renderer;
+	*/
+	constructor(handlers:InputHandler[]) {
+		for(let i in handlers) {
+			//handlers[i].registerEventStart(this.eventStart);
+			//handlers[i].registerEventEnd(this.eventEnd);
+
+			handlers[i].registerInputEventStart(this.inputEventStart);
+			handlers[i].registerInputEventEnd(this.inputEventEnd);
+
+			handlers[i].registerConnectEvent(this.connectEvent);
+			handlers[i].registerDisconnectEvent(this.disconnectEvent);
+		}
+		this.stage=this.initStage(0);
+		this.stage.renderer.render_next_frame();
+	}
+	eventStart(info:EventInfo) {
+		this.stage.eventStart(info);
+	}
+	eventEnd(info:EventInfo) {
+		this.stage.eventEnd(info);
+	}
+	inputEventStart(info:EventInfo) {
+		this.stage.inputEventStart(info);
+	}
+	inputEventEnd(info:EventInfo) {
+		this.stage.inputEventEnd(info);
+	}
+	connectEvent(info:EventInfo) {
+		this.stage.connectEvent(info);
+	}
+	disconnectEvent(info:EventInfo) {
+		this.stage.disconnectEvent(info);
 	}
 	/**
-	* The name of the game.
+	* Initialize a stage by index
 	*/
-        name:string;
+	abstract initStage(n:number):Stage;
 	/**
-	* The component that will display the game objects to the user.
-        */
-	renderer:Renderer;
+	* The current stage, null if not initialized yet
+	*/
+	private stage:Stage;
 }
-//TODO: They make the main class, inherit from Game
