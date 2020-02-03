@@ -23,7 +23,7 @@
 		"alwaysStrict": true,
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
-		"noImplicitThis": false,//TODO: swap this later (12 problems on 13sep2019)
+		"noImplicitThis": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,

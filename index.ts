@@ -6,15 +6,30 @@ console.log("Welcome to Spud Game Engine v"+versionStr+"!")
 */
 export abstract class Sprite {
 	/**
-	* An array of all of the dementions (x, y, z...) and their properties
-	* (position, speed, velocity, acceleration...)
+	* The X-position of the sprite.
 	*/
-	abstract location:number[][];
-	abstract eventStart(info:EventInfo):void;
-	abstract eventEnd(info:EventInfo):void;
+	x=0
+	/**
+	* The Y-position of the sprite.
+	*/
+	y=0
+	//abstract eventStart(info:EventInfo):void;
+	//abstract eventEnd(info:EventInfo):void;
+	/**
+	* An event triggered when user input starts (ex: a keydown event)
+	*/
 	abstract inputEventStart(info:EventInfo):void;
+	/**
+	* An event triggered when user input ends (ex: a keyup event)
+	*/
 	abstract inputEventEnd(info:EventInfo):void;
+	/**
+	* An event triggered when a new source of user input is connected
+	*/
 	abstract connectEvent(info:EventInfo):void;
+	/**
+	* An event triggered when a source of user input is disconnected
+	*/
 	abstract disconnectEvent(info:EventInfo):void;
 }
 export interface EventInfo{}
@@ -22,12 +37,24 @@ export interface EventInfo{}
 * Handle for input
 */
 export abstract class InputHandler {
-	abstract registerEventStart:(handler:(info:EventInfo)=>void)=>void;
-	abstract registerEventEnd:(handler:(info:EventInfo)=>void)=>void;
-	abstract registerInputEventStart:(handler:(info:EventInfo)=>void)=>void;
-	abstract registerInputEventEnd:(handler:(info:EventInfo)=>void)=>void;
-	abstract registerConnectEvent:(handler:(info:EventInfo)=>void)=>void;
-	abstract registerDisconnectEvent:(handler:(info:EventInfo)=>void)=>void;
+	//eventStart:((info:EventInfo)=>void)|null=()=>null;
+	//eventEnd:((info:EventInfo)=>void)|null=()=>null;
+	/**
+	* An event triggered when user input starts (ex: a keydown event)
+	*/
+	inputEventStart:((info:EventInfo)=>void)|null=()=>null;
+	/**
+	* An event triggered when user input ends (ex: a keyup event)
+	*/
+	inputEventEnd:((info:EventInfo)=>void)|null=()=>null;
+	/**
+	* An event triggered when a new source of user input is connected
+	*/
+	connectEvent:((info:EventInfo)=>void)|null=()=>null;
+	/**
+	* An event triggered when a source of user input is disconnected
+	*/
+	disconnectEvent:((info:EventInfo)=>void)|null=()=>null;
 }
 /**
 * The abstract parent class of all collider implimentations
@@ -55,16 +82,33 @@ export abstract class Renderer {
 		this.render_current_frame();
 	}
 }
+export interface Change{
+	moveTo:(...args:number[])=>void;
+	safeMoveTo:(...args:number[])=>void;
+	set:(obj:{},duration?:number)=>void;
+}
 /**
- * A container for Sprites that manages rendering and physics
- */
+* A container for Sprites that manages rendering and physics
+*/
 export abstract class Stage {
 	constructor(renderer:Renderer,physics:Physics) {
 		this.renderer=renderer;
 		this.physics=physics;
-		this.sprites=[];
 	}
-	sprites:Sprite[];
+	/**
+	* Iterate through the sprites
+	*/
+	abstract mapOnSprites:(callback:(sprite:Sprite)=>void)=>void;
+	/**
+	* Add a sprite
+	* @return The sprite's ID number
+	*/
+	abstract add:(sprite:Sprite)=>number
+	/**
+	* Get sprite by it's ID number
+	*/
+	abstract getByID(id:number):Sprite;
+	abstract change:(id:number)=>Change;
 	/**
 	* The component that will display the game objects to the user.
 	*/
@@ -73,35 +117,37 @@ export abstract class Stage {
 	* The component that sets the rules for how sprites can interact with oneanother.
 	*/
 	physics:Physics;
-	eventStart(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].eventStart(info);
-		}
-	}
-	eventEnd(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].eventEnd(info);
-		}
-	}
+	/**
+	* An event triggered when user input starts (ex: a keydown event)
+	*/
 	inputEventStart(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].inputEventStart(info);
-		}
+		this.mapOnSprites((sprite) => {
+			sprite.inputEventStart(info);
+		});
 	}
+	/**
+	* An event triggered when user input ends (ex: a keyup event)
+	*/
 	inputEventEnd(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].inputEventEnd(info);
-		}
+		this.mapOnSprites((sprite) => {
+			sprite.inputEventEnd(info);
+		});
 	}
+	/**
+	* An event triggered when a new source of user input is connected
+	*/
 	connectEvent(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].connectEvent(info);
-		}
+		this.mapOnSprites((sprite) => {
+			sprite.connectEvent(info);
+		});
 	}
+	/**
+	* An event triggered when a source of user input is disconnected
+	*/
 	disconnectEvent(info:EventInfo) {
-		for(let i in this.sprites) {
-			this.sprites[i].disconnectEvent(info);
-		}
+		this.mapOnSprites((sprite) => {
+			sprite.disconnectEvent(info);
+		});
 	}
 }
 /**
@@ -113,33 +159,37 @@ export abstract class Game {
 	*/
 	constructor(handlers:InputHandler[]) {
 		for(let i in handlers) {
-			//handlers[i].registerEventStart(this.eventStart);
-			//handlers[i].registerEventEnd(this.eventEnd);
+			handlers[i].inputEventStart=this.inputEventStart;
+			handlers[i].inputEventEnd=this.inputEventEnd;
 
-			handlers[i].registerInputEventStart(this.inputEventStart);
-			handlers[i].registerInputEventEnd(this.inputEventEnd);
-
-			handlers[i].registerConnectEvent(this.connectEvent);
-			handlers[i].registerDisconnectEvent(this.disconnectEvent);
+			handlers[i].connectEvent=this.connectEvent;
+			handlers[i].disconnectEvent=this.disconnectEvent;
 		}
 		this.stage=this.initStage(0);
 		this.stage.renderer.render_next_frame();
+		//TODO: Initialize game loop and render loop
 	}
-	eventStart(info:EventInfo) {
-		this.stage.eventStart(info);
-	}
-	eventEnd(info:EventInfo) {
-		this.stage.eventEnd(info);
-	}
+	/**
+	* An event triggered when user input starts (ex: a keydown event)
+	*/
 	inputEventStart(info:EventInfo) {
 		this.stage.inputEventStart(info);
 	}
+	/**
+	* An event triggered when user input ends (ex: a keyup event)
+	*/
 	inputEventEnd(info:EventInfo) {
 		this.stage.inputEventEnd(info);
 	}
+	/**
+	* An event triggered when a new source of user input is connected
+	*/
 	connectEvent(info:EventInfo) {
 		this.stage.connectEvent(info);
 	}
+	/**
+	* An event triggered when a source of user input is disconnected
+	*/
 	disconnectEvent(info:EventInfo) {
 		this.stage.disconnectEvent(info);
 	}
@@ -148,7 +198,13 @@ export abstract class Game {
 	*/
 	abstract initStage(n:number):Stage;
 	/**
-	* The current stage, null if not initialized yet
+	* Immedietly init and set the stage
 	*/
-	private stage:Stage;
+	changeToStage(n:number) {
+		this.stage=this.initStage(n);
+	}
+	/**
+	* The current stage
+	*/
+	stage:Stage;
 }
