@@ -274,9 +274,12 @@ export abstract class Game {
 		if (s instanceof Stage) {
 			if(typeof name!=="undefined") this.stages[name]=s
 			else throw "Must supply name!"
+			if (this.stageID==-1) this.stageID=name;
 		}else if(typeof name!=="undefined") throw "Name not needed!"
-		else for(let i in s)
+		else for(let i in s) {
 			this.stages[i]=s[i]//Allow for overriding
+			if (this.stageID==-1) this.stageID=i;
+		}
 	}
 
 	/**
@@ -302,14 +305,6 @@ export abstract class Game {
 	*/
 	disconnectEvent(info:EventInfo) {
 		this.stages[0].disconnectEvent(info);
-	}
-	/**
-	* Immediately init and set the stage
-	*/
-	changeToStage(n:number|string) {
-		this.stages[this.stageID].pause()
-		this.stageID=n;
-		this.stages[this.stageID].play()
 	}
 	/**
 	* The current stage
