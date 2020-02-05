@@ -1,4 +1,4 @@
-import{Game,Stage,Renderer,Physics,InputHandler, Sprite, SpriteCollection}from"../index"
+import{Stage,Renderer,Physics,InputHandler, Sprite}from"../index"
 
 //Would be imported too
 class MyInputHandler extends InputHandler {}

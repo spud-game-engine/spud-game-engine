@@ -6,14 +6,12 @@ console.log("Welcome to Spud Game Engine v"+versionStr+"!")
 * The abstract parent class of all variety of sprites
 */
 export abstract class Sprite {
-	constructor() {
-		this.location=[]
-		this.rotation=[]
-	}
 	/**An array of the location values (x,y,z...) */
-	location:number[];
+	location:number[]=[];
 	/**An array of the rotation values (x,y,z...) */
-	rotation:number[];
+	rotation:number[]=[];
+	rendererInfo:RendererInfo={}
+	physicsInfo:PhysicsInfo={}
 
 	//abstract eventStart(info:EventInfo):void;
 	//abstract eventEnd(info:EventInfo):void;
@@ -163,10 +161,14 @@ export abstract class Resumable {
 		clearInterval(this.timeout);
 	}
 }
+/** The physics information stored on a sprite */
+export interface PhysicsInfo {}
 /**
 * The abstract parent class of all collider implimentations
 */
 export abstract class Physics extends Resumable{}
+/** The information stored on a sprite saying how to render this sprite */
+export interface RendererInfo {}
 /**
 * A tool that lets users "see" the current game state.
 */
@@ -261,12 +263,6 @@ export abstract class Stage extends SpriteCollection {
 * The base class for all categories of games to inherit from
 */
 export abstract class Game {
-	constructor(s:Stage|Stage[]|{
-		[index:string]:Stage,
-		[index:number]:Stage,
-	}={},name?:string|number) {
-		this.add(s,name)
-	}
 	/**
 	 * Add a stage
 	 * @param s The stage
@@ -337,7 +333,7 @@ export abstract class Game {
 	 * Pause the game
 	 */
 	pause() {
-		this.stages[this.stageID].play()
+		this.stages[this.stageID].pause()
 		return this
 	}
 }
