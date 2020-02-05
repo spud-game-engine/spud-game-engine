@@ -1,7 +1,7 @@
 export let version:[number,number,number,string?]=[0,0,0]
 export let versionStr:string=version.slice(0,3).join(".").concat(version[3]||"")
 console.log("Welcome to Spud Game Engine v"+versionStr+"!")
-let totalNumberOfSprites=0;
+//let totalNumberOfSprites=0;
 /**
 * The abstract parent class of all variety of sprites
 */
@@ -10,7 +10,9 @@ export abstract class Sprite {
 		this.location=[]
 		this.rotation=[]
 	}
+	/**An array of the location values (x,y,z...) */
 	location:number[];
+	/**An array of the rotation values (x,y,z...) */
 	rotation:number[];
 
 	//abstract eventStart(info:EventInfo):void;
@@ -18,21 +20,78 @@ export abstract class Sprite {
 	/**
 	* An event triggered when user input starts (ex: a keydown event)
 	*/
-	inputEventStart:(info:EventInfo)=>void=()=>undefined;
+	inputEventStart(info:EventInfo) {console.log(info)}
 	/**
 	* An event triggered when user input ends (ex: a keyup event)
 	*/
-	inputEventEnd:(info:EventInfo)=>void=()=>undefined;
+	inputEventEnd(info:EventInfo) {console.log(info)}
 	/**
 	* An event triggered when a new source of user input is connected
 	*/
-	connectEvent:(info:EventInfo)=>void=()=>undefined;
+	connectEvent(info:EventInfo) {console.log(info)}
 	/**
 	* An event triggered when a source of user input is disconnected
 	*/
-	disconnectEvent:(info:EventInfo)=>void=()=>undefined;
+	disconnectEvent(info:EventInfo) {console.log(info)}
 }
-export interface EventInfo{}
+interface SpriteCollectionObj{
+	[index:string]:Sprite,
+	[index:number]:Sprite
+}
+export abstract class SpriteCollection extends Sprite {
+	constructor() {
+		super()
+		this.children={}
+	}
+	private children:SpriteCollectionObj;
+	/**
+	* Iterate through the sprites
+	*/
+	mapOnSprites(callback:(sprite:Sprite,index:number)=>void) {
+		//this.children.map(callback)
+		let count=0;
+		for (let i in this.children)
+			callback(this.children[i],count++)
+	}
+	/**
+	* Add a sprite
+	*/
+	add(children:SpriteCollectionObj|Sprite[]|Sprite={},name?:number|string) {
+		if (children instanceof Sprite) {
+			if(typeof name!=="undefined") this.children[name]=children
+			else throw "Must supply name!"
+		}else if(typeof name!=="undefined") throw "Name not needed!"
+		else for(let i in children)
+			this.children[i]=children[i]//Allow for overriding
+	}
+	/**
+	* Get sprite by it's ID
+	*/
+	getByID(id:number) {
+		return this.children[id];
+	}
+	/**
+	* Change things about a sprite, such as where it is
+	*/
+	change(id:number):Change{
+		let sprite=this.getByID(id);
+		return {
+			moveTo:(...args)=>{
+				// for(let i=0;i<args.length;++i) {
+				// 	sprite.location[i][0]=args[i];
+				// }
+				sprite.location=args;
+			},
+			//TODO: add this
+			/*safeMoveTo:(...args) {
+				for(let i=0;i<args.length;++i) {
+					sprite.location[i][0]=args[i];
+				}
+			},*/
+		}
+	}
+}
+export interface EventInfo{} //TODO
 /**
 * Handle for input
 */
@@ -56,19 +115,12 @@ export abstract class InputHandler {
 	*/
 	disconnectEvent:((info:EventInfo)=>void)|null=()=>null;
 }
-/**
-* The abstract parent class of all collider implimentations
-*/
-export abstract class Physics {}
-/**
-* A tool that lets users "see" the current game state.
-*/
-export abstract class Renderer {
+export abstract class Resumable {
 	constructor(targetFPS:number) {
 		this.targetFPS=targetFPS;
 	}
 	/**
-	* The framerate that we will be trying to maintain
+	* The Iterations Per Second that we will be trying to maintain
 	*/
 	targetFPS:number;
 	/**
@@ -80,7 +132,8 @@ export abstract class Renderer {
 		throw "TODO: Make this function!"
 	}
 	/**
-	* Display the current game state (frame) to the user.
+	* Apply changes about current frame. In a GUI, this would be sending the
+	* user an updated state image.
 	*/
 	render_current_frame(){
 		throw "TODO: Make this function!"
@@ -95,7 +148,7 @@ export abstract class Renderer {
 	private timeout:number|null=null
 	/**
 	* Tell the [[Renderer]] to start rendering the game
-	* 
+	*
 	* Resumes if needed.
 	*/
 	play() {
@@ -110,6 +163,14 @@ export abstract class Renderer {
 		clearInterval(this.timeout);
 	}
 }
+/**
+* The abstract parent class of all collider implimentations
+*/
+export abstract class Physics extends Resumable{}
+/**
+* A tool that lets users "see" the current game state.
+*/
+export abstract class Renderer extends Resumable {}
 // export interface ChangeObj {
 // 	x?:number;
 // 	y?:number;
@@ -130,8 +191,9 @@ export interface Change{
 /**
 * A container for Sprites that manages rendering and physics
 */
-export abstract class Stage {
+export abstract class Stage extends SpriteCollection {
 	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
+		super()
 		this.renderer=renderer;
 		this.physics=physics;
 		for(let i in handlers) {
@@ -140,51 +202,6 @@ export abstract class Stage {
 
 			handlers[i].connectEvent=this.connectEvent;
 			handlers[i].disconnectEvent=this.disconnectEvent;
-		}
-		this.sprites=[];
-	}
-	private sprites:Sprite[];
-	/**
-	* Iterate through the sprites
-	*/
-	mapOnSprites(callback:(sprite:Sprite,index:number,array:Sprite[])=>void) {
-		this.sprites.map(callback)
-	}
-	/**
-	* Add a sprite
-	* @return The sprite's ID number
-	*/
-	add(sprite:Sprite):number {
-		let out=totalNumberOfSprites++;
-		// sprite.connectRenderer(this.renderer);
-		// sprite.connectPhysics(this.physics);
-		this.sprites[out]=sprite;
-		return out
-	}
-	/**
-	* Get sprite by it's ID
-	*/
-	getByID(id:number) {
-		return this.sprites[id];
-	}
-	/**
-	* Change things about a sprite, such as where it is
-	*/
-	change(id:number):Change{
-		let sprite=this.getByID(id);
-		return {
-			moveTo:(...args)=>{
-				// for(let i=0;i<args.length;++i) {
-				// 	sprite.location[i][0]=args[i];
-				// }
-				sprite.location=args;
-			},
-			//TODO: add this
-			/*safeMoveTo:(...args) {
-				for(let i=0;i<args.length;++i) {
-					sprite.location[i][0]=args[i];
-				}
-			},*/
 		}
 	}
 	/**
@@ -196,6 +213,17 @@ export abstract class Stage {
 	* with oneanother.
 	*/
 	physics:Physics;
+	/**
+	 * Pause or play this stage
+	 */
+	play() {
+		this.renderer.play() //does the order matter?
+		this.physics.play()
+	}
+	pause() {
+		this.physics.pause() //does the order matter?
+		this.renderer.pause()
+	}
 	/**
 	* An event triggered when user input starts (ex: a keydown event)
 	*/
@@ -233,48 +261,83 @@ export abstract class Stage {
 * The base class for all categories of games to inherit from
 */
 export abstract class Game {
-	constructor(/*renderer:Renderer,physics:Physics,handlers:InputHandler[]*/) {
-		//super(renderer,physics,handlers)
-		this.stage=this.initStage(0);
-		this.stage.renderer.render_next_frame();
-		//TODO: Initialize game loop and render loop
+	constructor(s:Stage|Stage[]|{
+		[index:string]:Stage,
+		[index:number]:Stage,
+	}={},name?:string|number) {
+		this.add(s,name)
 	}
+	/**
+	 * Add a stage
+	 * @param s The stage
+	 */
+	add(s:Stage|Stage[]|{
+		[index:string]:Stage,
+		[index:number]:Stage,
+	}={},name?:string|number) {
+		if (s instanceof Stage) {
+			if(typeof name!=="undefined") this.stages[name]=s
+			else throw "Must supply name!"
+		}else if(typeof name!=="undefined") throw "Name not needed!"
+		else for(let i in s)
+			this.stages[i]=s[i]//Allow for overriding
+	}
+
 	/**
 	* An event triggered when user input starts (ex: a keydown event)
 	*/
 	inputEventStart(info:EventInfo) {
-		this.stage.inputEventStart(info);
+		this.stages[0].inputEventStart(info);
 	}
 	/**
 	* An event triggered when user input ends (ex: a keyup event)
 	*/
 	inputEventEnd(info:EventInfo) {
-		this.stage.inputEventEnd(info);
+		this.stages[0].inputEventEnd(info);
 	}
 	/**
 	* An event triggered when a new source of user input is connected
 	*/
 	connectEvent(info:EventInfo) {
-		this.stage.connectEvent(info);
+		this.stages[0].connectEvent(info);
 	}
 	/**
 	* An event triggered when a source of user input is disconnected
 	*/
 	disconnectEvent(info:EventInfo) {
-		this.stage.disconnectEvent(info);
+		this.stages[0].disconnectEvent(info);
 	}
-	/**
-	* Initialize a stage by index
-	*/
-	abstract initStage(n:number):Stage;
 	/**
 	* Immediately init and set the stage
 	*/
-	changeToStage(n:number) {
-		this.stage=this.initStage(n);
+	changeToStage(n:number|string) {
+		this.stages[this.stageID].pause()
+		this.stageID=n;
+		this.stages[this.stageID].play()
 	}
 	/**
 	* The current stage
 	*/
-	stage:Stage;
+	stageID:number|string=-1;
+	/**
+	 * All stages
+	 */
+	stages:{
+		[index:string]:Stage,
+		[index:number]:Stage,
+	}={};
+	/**
+	 * Play the game
+	 */
+	play() {
+		this.stages[this.stageID].play()
+		return this
+	}
+	/**
+	 * Pause the game
+	 */
+	pause() {
+		this.stages[this.stageID].play()
+		return this
+	}
 }
