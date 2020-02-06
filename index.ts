@@ -143,15 +143,21 @@ export abstract class Resumable {
 		this.prepare_next_frame();
 		this.render_current_frame();
 	}
+	/**
+	 * The number for the current interval
+	 */
 	private timeout:number|null=null
+	/** A reference to the [[SpriteCollection]] that we will be sending signals to */
+	collection:SpriteCollection|null=null
 	/**
 	* Tell the [[Renderer]] to start rendering the game
 	*
 	* Resumes if needed.
 	*/
-	play() {
+	play(env?:SpriteCollection) {
 		this.timeout=setInterval(this.render_next_frame,
 			(1/this.targetFPS)/1000);
+		if (typeof env!=="undefined") this.collection=env
 	}
 	/**
 	* Tell the [[Renderer]] to pause rendering the game
@@ -166,13 +172,15 @@ export interface PhysicsInfo {}
 /**
 * The abstract parent class of all collider implimentations
 */
-export abstract class Physics extends Resumable{}
+export abstract class Physics extends Resumable{
+}
 /** The information stored on a sprite saying how to render this sprite */
 export interface RendererInfo {}
 /**
 * A tool that lets users "see" the current game state.
 */
-export abstract class Renderer extends Resumable {}
+export abstract class Renderer extends Resumable {
+}
 // export interface ChangeObj {
 // 	x?:number;
 // 	y?:number;
@@ -181,7 +189,7 @@ export abstract class Renderer extends Resumable {}
 // }
 /**
 * The object that is returned by [[Stage.change]].
-* 
+*
 * Seeks to provide a way of changing things about Sprites within a stage
 */
 export interface Change{
@@ -216,11 +224,11 @@ export abstract class Stage extends SpriteCollection {
 	*/
 	physics:Physics;
 	/**
-	 * Pause or play this stage
-	 */
+	* Pause or play this stage
+	*/
 	play() {
-		this.renderer.play() //does the order matter?
-		this.physics.play()
+		this.renderer.play(this) //does the order matter?
+		this.physics.play(this)
 	}
 	pause() {
 		this.physics.pause() //does the order matter?

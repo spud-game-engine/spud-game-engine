@@ -12,7 +12,7 @@ class MySprite extends Sprite{}
 class MyStage extends Stage {
 	constructor() {
 		super(new MyRenderer(10),new MyPhysics(10),[new MyInputHandler()])
-		this.add(new MySprite())
+		this.add(new MySprite(),"My sprite.")
 	}
 }
 new MyStage().play();//We don't need the game class if there's only one stage
