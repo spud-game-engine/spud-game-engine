@@ -15,6 +15,7 @@ class MyStage extends Stage {
 			new MyPhysics(10),
 			[new MyInputHandler()])
 		this.add(new MySprite(),"My sprite.")
+		this.on("up",()=>alert("WOW!"))
 	}
 }
 new MyStage().play();//We don't need the game class if there's only one stage
