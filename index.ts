@@ -12,25 +12,6 @@ export abstract class Sprite {
 	rotation:number[]=[];
 	rendererInfo:RendererInfo={}
 	physicsInfo:PhysicsInfo={}
-
-	//abstract eventStart(info:EventInfo):void;
-	//abstract eventEnd(info:EventInfo):void;
-	/**
-	* An event triggered when user input starts (ex: a keydown event)
-	*/
-	inputEventStart(info:EventInfo) {console.log(info)}
-	/**
-	* An event triggered when user input ends (ex: a keyup event)
-	*/
-	inputEventEnd(info:EventInfo) {console.log(info)}
-	/**
-	* An event triggered when a new source of user input is connected
-	*/
-	connectEvent(info:EventInfo) {console.log(info)}
-	/**
-	* An event triggered when a source of user input is disconnected
-	*/
-	disconnectEvent(info:EventInfo) {console.log(info)}
 }
 interface SpriteCollectionObj{
 	[index:string]:Sprite,
@@ -89,30 +70,28 @@ export abstract class SpriteCollection extends Sprite {
 		}
 	}
 }
-export interface EventInfo{} //TODO
-/**
-* Handle for input
-*/
-export abstract class InputHandler {
-	//eventStart:((info:EventInfo)=>void)|null=()=>null;
-	//eventEnd:((info:EventInfo)=>void)|null=()=>null;
-	/**
-	* An event triggered when user input starts (ex: a keydown event)
-	*/
-	inputEventStart:((info:EventInfo)=>void)|null=()=>null;
-	/**
-	* An event triggered when user input ends (ex: a keyup event)
-	*/
-	inputEventEnd:((info:EventInfo)=>void)|null=()=>null;
-	/**
-	* An event triggered when a new source of user input is connected
-	*/
-	connectEvent:((info:EventInfo)=>void)|null=()=>null;
-	/**
-	* An event triggered when a source of user input is disconnected
-	*/
-	disconnectEvent:((info:EventInfo)=>void)|null=()=>null;
+/** Data for an event */
+export interface EventInfo{
+	/** The name of the event */
+	name:string
+	/** The data associated with the event*/
+	data:any
+	/** Every previous event handler that has touched this */
+	_waterfall:any[]
 }
+export interface EventHost{
+	/** Add an event */
+	on(name:string,callback:(info:EventInfo)=>any):void
+	/** Remove all events from a given event */
+	off(name:string):void
+	/** Trigger an event */
+	trigger(name:string,info:EventInfo):any[]
+	/** The host for the events */
+	events:{[index:string]:((info:EventInfo)=>any)[]}
+}
+/**
+* A class that can be paused or played
+*/
 export abstract class Resumable {
 	constructor(targetFPS:number) {
 		this.targetFPS=targetFPS;
@@ -144,8 +123,8 @@ export abstract class Resumable {
 		this.render_current_frame();
 	}
 	/**
-	 * The number for the current interval
-	 */
+	* The number for the current interval
+	*/
 	private timeout:number|null=null
 	/** A reference to the [[SpriteCollection]] that we will be sending signals to */
 	collection:SpriteCollection|null=null
@@ -156,7 +135,7 @@ export abstract class Resumable {
 	*/
 	play(env?:SpriteCollection) {
 		this.timeout=setInterval(this.render_next_frame,
-			(1/this.targetFPS)/1000);
+			this.targetFPS/1000);
 		if (typeof env!=="undefined") this.collection=env
 	}
 	/**
@@ -167,20 +146,86 @@ export abstract class Resumable {
 		clearInterval(this.timeout);
 	}
 }
+/**
+* Handle for input
+*/
+export abstract class InputHandler extends Resumable implements EventHost {
+	constructor() {
+		super(1000)
+	}
+	events:{
+		inputDown:((info:EventInfo)=>any)[]
+		inputPress:((info:EventInfo)=>any)[]
+		inputUp:((info:EventInfo)=>any)[]
+	}={
+		inputDown:[],
+		inputPress:[],
+		inputUp:[],
+	}
+	/** Add an event */
+	on(name:string,callback:(info:EventInfo)=>any) {
+		switch(name){
+			case "down":
+			case "inputDown":
+				this.events.inputDown.push(callback)
+				break;
+			case "press":
+			case "inputPress":
+				this.events.inputPress.push(callback)
+				break;
+			case "up":
+			case "inputUp":
+				this.events.inputUp.push(callback)
+				break;
+			default: throw "Event '"+name+"' isn't an availiable event!"
+		}
+	}
+	/** Remove all events from a given event */
+	off(name:string) {
+		switch(name){
+			case "down":
+			case "inputDown":
+				this.events.inputDown=[]
+				break;
+			case "press":
+			case "inputPress":
+				this.events.inputPress=[]
+				break;
+			case "up":
+			case "inputUp":
+				this.events.inputUp=[]
+				break;
+			default: throw "Event '"+name+"' isn't an availiable event!"
+		}
+	}
+	/** Trigger an event */
+	trigger(name:string,info:EventInfo):any[] {
+		switch(name){
+			case "down":
+			case "inputDown":
+				return this.events.inputDown.map((callback)=>callback(info))
+			case "press":
+			case "inputPress":
+				return this.events.inputPress.map((callback)=>callback(info))
+			case "up":
+			case "inputUp":
+				return this.events.inputUp.map((callback)=>callback(info))
+			default: throw "Event '"+name+"' isn't an availiable event!"
+		}
+	}
+}
 /** The physics information stored on a sprite */
 export interface PhysicsInfo {}
 /**
 * The abstract parent class of all collider implimentations
 */
-export abstract class Physics extends Resumable{
-}
+export abstract class Physics extends Resumable{}
 /** The information stored on a sprite saying how to render this sprite */
 export interface RendererInfo {}
 /**
 * A tool that lets users "see" the current game state.
 */
-export abstract class Renderer extends Resumable {
-}
+export abstract class Renderer extends Resumable {}
 // export interface ChangeObj {
 // 	x?:number;
 // 	y?:number;
@@ -201,18 +246,12 @@ export interface Change{
 /**
 * A container for Sprites that manages rendering and physics
 */
-export abstract class Stage extends SpriteCollection {
+export abstract class Stage extends SpriteCollection implements EventHost {
 	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
 		super()
 		this.renderer=renderer;
 		this.physics=physics;
-		for(let i in handlers) {
-			handlers[i].inputEventStart=this.inputEventStart;
-			handlers[i].inputEventEnd=this.inputEventEnd;
-
-			handlers[i].connectEvent=this.connectEvent;
-			handlers[i].disconnectEvent=this.disconnectEvent;
-		}
+		this.handlers=handlers
 	}
 	/**
 	* The component that will display the game objects to the user.
@@ -224,57 +263,44 @@ export abstract class Stage extends SpriteCollection {
 	*/
 	physics:Physics;
 	/**
-	* Pause or play this stage
+	* A list of all user input handlers for this stage
+        */
+        handlers:InputHandler[]
+	/**
+	* Play this stage
 	*/
 	play() {
 		this.renderer.play(this) //does the order matter?
 		this.physics.play(this)
+		this.handlers.map((v)=>v.play(this))
 	}
+	/**
+	* Pause this stage
+	*/
 	pause() {
 		this.physics.pause() //does the order matter?
 		this.renderer.pause()
+		this.handlers.map((v)=>v.pause())
 	}
-	/**
-	* An event triggered when user input starts (ex: a keydown event)
-	*/
-	inputEventStart(info:EventInfo) {
-		this.mapOnSprites((sprite) => {
-			sprite.inputEventStart(info);
-		});
+	events:EventHost["events"]={}
+	on:EventHost["on"]=(name,callback)=>{
+		this.events[name].push(callback)
 	}
-	/**
-	* An event triggered when user input ends (ex: a keyup event)
-	*/
-	inputEventEnd(info:EventInfo) {
-		this.mapOnSprites((sprite) => {
-			sprite.inputEventEnd(info);
-		});
+	trigger:EventHost["trigger"]=(name,info)=>
+		this.events[name].map((val)=>val(info))
+	off:EventHost["off"]=(name)=>{
+		this.events[name]=[]
 	}
-	/**
-	* An event triggered when a new source of user input is connected
-	*/
-	connectEvent(info:EventInfo) {
-		this.mapOnSprites((sprite) => {
-			sprite.connectEvent(info);
-		});
-	}
-	/**
-	* An event triggered when a source of user input is disconnected
-	*/
-	disconnectEvent(info:EventInfo) {
-		this.mapOnSprites((sprite) => {
-			sprite.disconnectEvent(info);
-		});
-	}
+
 }
 /**
 * The base class for all categories of games to inherit from
 */
 export abstract class Game {
 	/**
-	 * Add a stage
-	 * @param s The stage
-	 */
+	* Add a stage
+	* @param s The stage
+	*/
 	add(s:Stage|Stage[]|{
 		[index:string]:Stage,
 		[index:number]:Stage,
@@ -291,50 +317,26 @@ export abstract class Game {
 	}
 
 	/**
-	* An event triggered when user input starts (ex: a keydown event)
-	*/
-	inputEventStart(info:EventInfo) {
-		this.stages[0].inputEventStart(info);
-	}
-	/**
-	* An event triggered when user input ends (ex: a keyup event)
-	*/
-	inputEventEnd(info:EventInfo) {
-		this.stages[0].inputEventEnd(info);
-	}
-	/**
-	* An event triggered when a new source of user input is connected
-	*/
-	connectEvent(info:EventInfo) {
-		this.stages[0].connectEvent(info);
-	}
-	/**
-	* An event triggered when a source of user input is disconnected
-	*/
-	disconnectEvent(info:EventInfo) {
-		this.stages[0].disconnectEvent(info);
-	}
-	/**
 	* The current stage
 	*/
 	stageID:number|string=-1;
 	/**
-	 * All stages
-	 */
+	* All stages
+	*/
 	stages:{
 		[index:string]:Stage,
 		[index:number]:Stage,
 	}={};
 	/**
-	 * Play the game
-	 */
+	* Play the game
+	*/
 	play() {
 		this.stages[this.stageID].play()
 		return this
 	}
 	/**
-	 * Pause the game
-	 */
+	* Pause the game
+	*/
 	pause() {
 		this.stages[this.stageID].pause()
 		return this
