@@ -12,6 +12,7 @@ export abstract class Sprite {
 	rotation:number[]=[];
 	rendererInfo:RendererInfo={}
 	physicsInfo:PhysicsInfo={}
+	abstract initPhysics():void
 }
 interface SpriteCollectionObj{
 	[index:string]:Sprite,
@@ -69,25 +70,6 @@ export abstract class SpriteCollection extends Sprite {
 			},*/
 		}
 	}
-}
-/** Data for an event */
-export interface EventInfo{
-	/** The name of the event */
-	name:string
-	/** The data associated with the event*/
-	data:any
-	/** Every previous event handler that has touched this */
-	_waterfall:any[]
-}
-export interface EventHost{
-	/** Add an event */
-	on(name:string,callback:(info:EventInfo)=>any):void
-	/** Remove all events from a given event */
-	off(name:string):void
-	/** Trigger an event */
-	trigger(name:string,info:EventInfo):any[]
-	/** The host for the events */
-	events:{[index:string]:((info:EventInfo)=>any)[]}
 }
 /**
 * A class that can be paused or played
@@ -149,77 +131,37 @@ export abstract class Resumable {
 /**
 * Handle for input
 */
-export abstract class InputHandler extends Resumable implements EventHost {
+export abstract class InputHandler extends Resumable {
 	constructor() {
 		super(1000)
+		this.events={}
 	}
-	events:{
-		inputDown:((info:EventInfo)=>any)[]
-		inputPress:((info:EventInfo)=>any)[]
-		inputUp:((info:EventInfo)=>any)[]
-	}={
-		inputDown:[],
-		inputPress:[],
-		inputUp:[],
-	}
+	events:{[index:string]:((info:KeyboardEvent)=>void)[]}={} //TODO: Don't use [[KeyboardEvent]] here!
 	/** Add an event */
-	on(name:string,callback:(info:EventInfo)=>any) {
-		switch(name){
-			case "down":
-			case "inputDown":
-				this.events.inputDown.push(callback)
-				break;
-			case "press":
-			case "inputPress":
-				this.events.inputPress.push(callback)
-				break;
-			case "up":
-			case "inputUp":
-				this.events.inputUp.push(callback)
-				break;
-			default: throw "Event '"+name+"' isn't an availiable event!"
-		}
+	on(name:"inputDown"|"inputUp"|"inputPress",callback:(info:KeyboardEvent)=>any) {
+		this.events[name].push(callback)
 	}
 	/** Remove all events from a given event */
-	off(name:string) {
-		switch(name){
-			case "down":
-			case "inputDown":
-				this.events.inputDown=[]
-				break;
-			case "press":
-			case "inputPress":
-				this.events.inputPress=[]
-				break;
-			case "up":
-			case "inputUp":
-				this.events.inputUp=[]
-				break;
-			default: throw "Event '"+name+"' isn't an availiable event!"
-		}
+	off(name:"inputDown"|"inputUp"|"inputPress") {
+		this.events[name]=[]
 	}
 	/** Trigger an event */
-	trigger(name:string,info:EventInfo):any[] {
-		switch(name){
-			case "down":
-			case "inputDown":
-				return this.events.inputDown.map((callback)=>callback(info))
-			case "press":
-			case "inputPress":
-				return this.events.inputPress.map((callback)=>callback(info))
-			case "up":
-			case "inputUp":
-				return this.events.inputUp.map((callback)=>callback(info))
-			default: throw "Event '"+name+"' isn't an availiable event!"
-		}
+	trigger(name:"inputDown"|"inputUp"|"inputPress",info:KeyboardEvent):any[] {
+		return this.events[name].map((callback)=>callback(info))
 	}
 }
 /** The physics information stored on a sprite */
 export interface PhysicsInfo {}
-/**
-* The abstract parent class of all collider implimentations
-*/
-export abstract class Physics extends Resumable{}
+/** The abstract parent class of all physics implimentations.*/
+export abstract class Physics extends Resumable{
+	play(collection?:SpriteCollection) {
+		super.play(collection)
+		if (this.collection!==null) this.collection.mapOnSprites((sprite)=>{
+			sprite.initPhysics();
+			sprite.initPhysics=()=>undefined;//Don't do it again!
+		})
+	}
+}
 /** The information stored on a sprite saying how to render this sprite */
 export interface RendererInfo {}
 /**
@@ -246,7 +188,7 @@ export interface Change{
 /**
 * A container for Sprites that manages rendering and physics
 */
-export abstract class Stage extends SpriteCollection implements EventHost {
+export abstract class Stage extends SpriteCollection {
 	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
 		super()
 		this.renderer=renderer;
@@ -264,8 +206,8 @@ export abstract class Stage extends SpriteCollection implements EventHost {
 	physics:Physics;
 	/**
 	* A list of all user input handlers for this stage
-        */
-        handlers:InputHandler[]
+	*/
+	handlers:InputHandler[]
 	/**
 	* Play this stage
 	*/
@@ -282,7 +224,7 @@ export abstract class Stage extends SpriteCollection implements EventHost {
 		this.renderer.pause()
 		this.handlers.map((v)=>v.pause())
 	}
-	events:EventHost["events"]={}
+	/*events:EventHost["events"]={}
 	on:EventHost["on"]=(name,callback)=>{
 		this.events[name].push(callback)
 	}
@@ -290,7 +232,7 @@ export abstract class Stage extends SpriteCollection implements EventHost {
 		this.events[name].map((val)=>val(info))
 	off:EventHost["off"]=(name)=>{
 		this.events[name]=[]
-	}
+	}*/
 
 }
 /**
