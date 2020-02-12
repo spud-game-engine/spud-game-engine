@@ -27,7 +27,7 @@ export abstract class SpriteCollection extends Sprite {
 	/**
 	* Iterate through the sprites
 	*/
-	mapOnSprites(callback:(sprite:Sprite,index:number)=>void) {
+	mapOnSprites(callback:(sprite:Sprite|SpriteCollection,index:number)=>void) {
 		//this.children.map(callback)
 		let count=0;
 		for (let i in this.children)
@@ -69,6 +69,15 @@ export abstract class SpriteCollection extends Sprite {
 				}
 			},*/
 		}
+	}
+	events:{[index:string]:((info:Event)=>void)[]}={} //TODO: Don't use [[Event]] here
+	on(name:string,callback:(info:Event)=>any){
+		this.mapOnSprites((sprite)=>{
+			if(sprite instanceof SpriteCollection) {
+				sprite.on(name,callback)
+			}
+		})
+		this.events[name].push(callback)
 	}
 }
 /**
@@ -131,14 +140,14 @@ export abstract class Resumable {
 /**
 * Handle for input
 */
-export abstract class InputHandler extends Resumable {
+export abstract class Input extends Resumable {
 	constructor() {
 		super(1000)
 		this.events={}
 	}
-	events:{[index:string]:((info:KeyboardEvent)=>void)[]}={} //TODO: Don't use [[KeyboardEvent]] here!
+	events:{[index:string]:((info:Event)=>void)[]}={}
 	/** Add an event */
-	on(name:"inputDown"|"inputUp"|"inputPress",callback:(info:KeyboardEvent)=>any) {
+	on(name:"inputDown"|"inputUp"|"inputPress",callback:(info:Event)=>any) {
 		this.events[name].push(callback)
 	}
 	/** Remove all events from a given event */
@@ -146,7 +155,7 @@ export abstract class InputHandler extends Resumable {
 		this.events[name]=[]
 	}
 	/** Trigger an event */
-	trigger(name:"inputDown"|"inputUp"|"inputPress",info:KeyboardEvent):any[] {
+	trigger(name:"inputDown"|"inputUp"|"inputPress",info:Event):any[] {
 		return this.events[name].map((callback)=>callback(info))
 	}
 }
@@ -189,7 +198,7 @@ export interface Change{
 * A container for Sprites that manages rendering and physics
 */
 export abstract class Stage extends SpriteCollection {
-	constructor(renderer:Renderer,physics:Physics,handlers:InputHandler[]) {
+	constructor(renderer:Renderer,physics:Physics,handlers:Input[]) {
 		super()
 		this.renderer=renderer;
 		this.physics=physics;
@@ -207,7 +216,7 @@ export abstract class Stage extends SpriteCollection {
 	/**
 	* A list of all user input handlers for this stage
 	*/
-	handlers:InputHandler[]
+	handlers:Input[]
 	/**
 	* Play this stage
 	*/
@@ -233,7 +242,6 @@ export abstract class Stage extends SpriteCollection {
 	off:EventHost["off"]=(name)=>{
 		this.events[name]=[]
 	}*/
-
 }
 /**
 * The base class for all categories of games to inherit from

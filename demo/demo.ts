@@ -1,7 +1,7 @@
-import{Stage,Renderer,Physics,InputHandler,Sprite}from"../index"
+import{Stage,Renderer,Physics,Input,Sprite}from"../index"
 
 //Would be imported too
-class MyInputHandler extends InputHandler {
+class MyInput extends Input {
 	constructor() {
 		super()
 		window.addEventListener("keydown",(ev)=>{
@@ -24,9 +24,9 @@ class MyStage extends Stage {
 	constructor() {
 		super(new MyRenderer(10),
 			new MyPhysics(10),
-			[new MyInputHandler()])
+			[new MyInput()])
 		this.add(new MySprite(),"My sprite.")
-		//this.on("inputUp",()=>alert("WOW!"))
+		this.on("inputUp",()=>alert("WOW!"))
 	}
 	initPhysics(){}
 }
