@@ -1,7 +1,6 @@
 export let version:[number,number,number,string?]=[0,0,0]
 export let versionStr:string=version.slice(0,3).join(".").concat(version[3]||"")
 console.log("Welcome to Spud Game Engine v"+versionStr+"!")
-//let totalNumberOfSprites=0;
 /**
 * The abstract parent class of all variety of sprites
 */
@@ -27,7 +26,8 @@ export abstract class SpriteCollection extends Sprite {
 	/**
 	* Iterate through the sprites
 	*/
-	mapOnSprites(callback:(sprite:Sprite|SpriteCollection,index:number)=>void) {
+	mapOnSprites(callback:
+			(sprite:Sprite|SpriteCollection,index:number)=>void) {
 		//this.children.map(callback)
 		let count=0;
 		for (let i in this.children)
@@ -36,9 +36,12 @@ export abstract class SpriteCollection extends Sprite {
 	/**
 	* Add a sprite
 	*/
-	add(children:SpriteCollectionObj|Sprite[]|Sprite={},name?:number|string) {
+	add(children:SpriteCollectionObj|Sprite[]|Sprite={},
+		name?:number|string)
+	{
 		if (children instanceof Sprite) {
-			if(typeof name!=="undefined") this.children[name]=children
+			if(typeof name!=="undefined")
+				this.children[name]=children
 			else throw "Must supply name!"
 		}else if(typeof name!=="undefined") throw "Name not needed!"
 		else for(let i in children)
@@ -53,7 +56,7 @@ export abstract class SpriteCollection extends Sprite {
 	/**
 	* Change things about a sprite, such as where it is
 	*/
-	change(id:number):Change{
+	change(id:number):Change{ //TODO
 		let sprite=this.getByID(id);
 		return {
 			moveTo:(...args)=>{
@@ -224,15 +227,31 @@ export abstract class Stage extends SpriteCollection {
 		this.renderer.pause()
 		this.handlers.map((v)=>v.pause())
 	}
-	/*events:EventHost["events"]={}
-	on:EventHost["on"]=(name,callback)=>{
-		this.events[name].push(callback)
+	//events:{[index:string]:((info:Event)=>void)[]}={} //TODO: don't use [[Event]] here
+	on(name:"inputDown"|"inputUp"|"inputPress",callback:(info:Event)=>void){
+		//this.events[name].push(callback)
+		switch(name){
+			case"inputDown":case"inputUp":case"inputPress":
+				this.handlers.map((h)=>h.on(name,callback))
+			break;
+		}
 	}
-	trigger:EventHost["trigger"]=(name,info)=>
-		this.events[name].map((val)=>val(info))
-	off:EventHost["off"]=(name)=>{
-		this.events[name]=[]
-	}*/
+	trigger(name:"inputDown"|"inputUp"|"inputPress",info:Event){
+		//return this.events[name].map((val)=>val(info))
+		switch(name){
+			case"inputDown":case"inputUp":case"inputPress":
+				this.handlers.map((h)=>h.trigger(name,info))
+			break;
+		}
+	}
+	off(name:"inputDown"|"inputUp"|"inputPress"){
+		//this.events[name]=[]
+		switch(name){
+			case"inputDown":case"inputUp":case"inputPress":
+				this.handlers.map((h)=>h.off(name))
+			break;
+		}
+	}
 }
 /**
 * The base class for all categories of games to inherit from
