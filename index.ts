@@ -70,15 +70,6 @@ export abstract class SpriteCollection extends Sprite {
 			},*/
 		}
 	}
-	events:{[index:string]:((info:Event)=>void)[]}={} //TODO: Don't use [[Event]] here
-	on(name:string,callback:(info:Event)=>any){
-		this.mapOnSprites((sprite)=>{
-			if(sprite instanceof SpriteCollection) {
-				sprite.on(name,callback)
-			}
-		})
-		this.events[name].push(callback)
-	}
 }
 /**
 * A class that can be paused or played
