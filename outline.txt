@@ -1,0 +1,45 @@
+GAME:
+	STAGE...:
+		SPRITE...:
+			BASIC_INFO:empty
+			RENDERER...:
+				INFO:empty
+				FRAME=>
+					update INFO from BASIC_INFO
+					draw
+				PLAY=>
+					call FRAME regularally
+				PAUSE=>
+					stop calling FRAME regularally
+			PHYSICS:
+				INFO:empty
+				FRAME=>
+					update PHYSICS_INFO from PHYSICS_INFO
+					update BASIC_INFO from PHYSICS_INFO
+				PLAY=>
+					call FRAME regularally
+				PAUSE=>
+					stop calling FRAME regularally
+			PLAY=>
+				call PLAY on RENDERER...,PHYSICS
+			PAUSE=>
+				call PAUSE on RENDERER...,PHYSICS
+		INPUT...:
+			EVENT...=> with INFO
+				do something with INFO
+			TRIGGER=> with INFO
+				call EVENT... with INFO
+			PLAY=>
+				start listening for INPUT
+					on input, call TRIGGER with INFO on INPUT
+			PAUSE=>
+				stop or ignore input
+		PLAY=>
+			call PLAY on INPUT...,SPRITE...
+		PAUSE=>
+			call PAUSE on INPUT...,SPRITE...
+	PLAY=>
+		call PLAY on STAGE...
+	PAUSE=>
+		call PAUSE on STAGE...
+
