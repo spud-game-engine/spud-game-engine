@@ -1,29 +1,55 @@
 GAME:
-	STAGE...:
+	STAGE... impliments [./COLLECTION]:
 		SPRITE...:
-			BASIC_INFO:empty
+			=> with SPRITE_INFO?,RENDERER{...?},PHYSICS
+				set SPRITE_INFO,RENDERER,PHYSICS
+				set GET_SPRITE_INFO on RENDERER,PHYSICS=>
+					return SPRITE_INFO
+				set SET_SPRITE_INFO on RENDERER,PHYSICS=> with I
+					update SPRITE_INFO from I
+			SPRITE_INFO:empty
 			RENDERER...:
+				=> with INFO?
+					set INFO
 				INFO:empty
+				GET_SPRITE_INFO=>empty
+				SET_SPRITE_INFO=>empty
 				FRAME=>
-					update INFO from BASIC_INFO
+					update INFO from call GET_SPRITE_INFO
 					draw
 				PLAY=>
 					call FRAME regularally
 				PAUSE=>
 					stop calling FRAME regularally
 			PHYSICS:
+				=> with INFO?
+					set INFO
 				INFO:empty
+				GET_SPRITE_INFO=>empty
+				SET_SPRITE_INFO=>empty
 				FRAME=>
-					update PHYSICS_INFO from PHYSICS_INFO
-					update BASIC_INFO from PHYSICS_INFO
+					update INFO from INFO
+					call UPDATE_SPRITE_INFO with INFO
 				PLAY=>
 					call FRAME regularally
 				PAUSE=>
 					stop calling FRAME regularally
+				" Arguable that these two are implimentation specific
+				MOVE=> with SAFE=TRUE,LOCATION...
+					update INFO " Wait for FRAME call
+				ROTATE=> with SAFE=TRUE,ROTATION...
+					update INFO
 			PLAY=>
 				call PLAY on RENDERER...,PHYSICS
 			PAUSE=>
 				call PAUSE on RENDERER...,PHYSICS
+		COLLECTION...:
+			SPRITE... impliments [../SPRITE]...
+			COLLECTION... impliments [../COLLECTION]...
+			PLAY=>
+				call PLAY on SPRITE...,COLLECTION...
+			PAUSE=>
+				call PAUSE on SPRITE...,COLLECTION...
 		INPUT...:
 			EVENT...=> with INFO
 				do something with INFO
@@ -35,9 +61,9 @@ GAME:
 			PAUSE=>
 				stop or ignore input
 		PLAY=>
-			call PLAY on INPUT...,SPRITE...
+			call PLAY on INPUT...,SPRITE...,COLLECTION...
 		PAUSE=>
-			call PAUSE on INPUT...,SPRITE...
+			call PAUSE on INPUT...,SPRITE...,COLLECTION...
 	PLAY=>
 		call PLAY on STAGE...
 	PAUSE=>
