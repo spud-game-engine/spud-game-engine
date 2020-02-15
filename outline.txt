@@ -1,5 +1,5 @@
 GAME:
-	STAGE... impliments [./COLLECTION]:
+	STAGE... extends [./COLLECTION]:
 		SPRITE...:
 			=> with SPRITE_INFO?,RENDERER{...?},PHYSICS
 				set SPRITE_INFO,RENDERER,PHYSICS
