@@ -17,9 +17,8 @@ interface SpriteCollectionObj{
 	[index:string]:Sprite,
 	[index:number]:Sprite
 }
-export abstract class SpriteCollection extends Sprite {
+export abstract class SpriteCollection {
 	constructor() {
-		super()
 		this.children={}
 	}
 	private children:SpriteCollectionObj;
@@ -134,9 +133,9 @@ export abstract class Resumable {
 /**
 * Handle for input
 */
-export abstract class Input extends Resumable {
+export abstract class Input /*extends Resumable*/ {
 	constructor() {
-		super(1000)
+		//super(1000)
 		this.events={}
 	}
 	events:{[index:string]:((info:Event)=>void)[]}={}
@@ -157,13 +156,13 @@ export abstract class Input extends Resumable {
 export interface PhysicsInfo {}
 /** The abstract parent class of all physics implimentations.*/
 export abstract class Physics extends Resumable{
-	play(collection?:SpriteCollection) {
-		super.play(collection)
-		if (this.collection!==null) this.collection.mapOnSprites((sprite)=>{
-			sprite.initPhysics();
-			sprite.initPhysics=()=>undefined;//Don't do it again!
-		})
-	}
+	//play(collection?:SpriteCollection) {
+		//super.play(collection)
+		//if (this.collection!==null) this.collection.mapOnSprites((sprite)=>{
+			//sprite.initPhysics();
+			//sprite.initPhysics=()=>undefined;//Don't do it again!
+		//})
+	//}
 }
 /** The information stored on a sprite saying how to render this sprite */
 export interface RendererInfo {}
@@ -217,7 +216,7 @@ export abstract class Stage extends SpriteCollection {
 	play() {
 		this.renderer.play(this) //does the order matter?
 		this.physics.play(this)
-		this.handlers.map((v)=>v.play(this))
+		//this.handlers.map((v)=>v.play(this))
 	}
 	/**
 	* Pause this stage
@@ -225,7 +224,7 @@ export abstract class Stage extends SpriteCollection {
 	pause() {
 		this.physics.pause() //does the order matter?
 		this.renderer.pause()
-		this.handlers.map((v)=>v.pause())
+		//this.handlers.map((v)=>v.pause())
 	}
 	//events:{[index:string]:((info:Event)=>void)[]}={} //TODO: don't use [[Event]] here
 	on(name:"inputDown"|"inputUp"|"inputPress",callback:(info:Event)=>void){
