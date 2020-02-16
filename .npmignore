@@ -1,0 +1,6 @@
+test
+intern.json
+.travis.ymp
+.nyc_output/
+coverage/
+docs

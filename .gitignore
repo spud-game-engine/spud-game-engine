@@ -2,3 +2,7 @@ node_modules
 *.log
 dist
 *.swp
+coverage
+dist
+docs
+.nyc_output

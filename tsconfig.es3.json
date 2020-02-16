@@ -1,0 +1,7 @@
+{//This is just so people could use this lib in es3 if they had restrictions
+	"extends":"./tsconfig.json",
+	"compilerOptions": {
+		"target": "es3",
+		"outDir": "dist/es3"
+	}
+}
