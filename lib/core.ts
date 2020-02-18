@@ -1,55 +1,53 @@
-export interface Playable{
-	play():void
-	pause():void|number
+export interface Bundle<T>{
+	[index:string]:T,
+	[index:number]:T,
 }
-export abstract class SpriteComponent implements Playable{
-	get_sprite_info?:()=>any
-	set_sprite_info?:(info:any)=>void
-	//abstract frame():void
+export abstract class Input{
+	/** Start listening for input */
 	abstract play():void
-	abstract pause():void
-}
-export abstract class Renderer extends SpriteComponent{}
-export abstract class Physics extends SpriteComponent{
-	//These might be too implimentation specific
-	abstract move(safe:boolean):void
-	abstract rotate(safe:boolean):void
-}
-export abstract class Input implements Playable{
-	abstract play():void
+	/** Stop listening for input */
 	abstract pause():void
 	abstract events:{[index:string]:(info:any)=>any}
 	abstract trigger:(name:string,info?:any)=>any
 }
+export interface SpriteInfo{}
+export interface RenderInfo{}
+export interface PhysicsInfo{}
 /**
 * An in-game object
 */
-export abstract class Sprite implements Playable{
-	sprite_info:any={}
-	abstract renderer:Renderer[]
-	abstract physics:Physics
-	play(){
-		this.renderer.map((r)=>r.play())
-		this.physics.play()
-	}
-	pause(){
-		this.renderer.map((r)=>r.pause())
-		this.physics.pause()
-	}
+export abstract class Sprite{
+	spriteInfo:SpriteInfo={}
+	renderInfo:RenderInfo={}
+	physicsInfo:PhysicsInfo={}
+	/** Draw the sprite
+	* Update [[renderInfo]] from [[spriteInfo]] then draw*/
+	abstract rendererFrame():void
+	/** Update physics status of the sprite
+	* Update [[physicsInfo]], then update that to [[spriteInfo]]*/
+	abstract physicsFrame():void
 }
 /**
 * A collection of sprites
 */
-export abstract class Collection implements Playable {
-	abstract sprites:Sprite[]
-	abstract collections:Collection[]
-	play(){
-		this.sprites.map((s)=>s.play());
-		this.collections.map((c)=>c.play());
+export abstract class Collection {
+	sprites:Bundle<Sprite>={}
+	collections:Bundle<Collection>={}
+	rendererFrame(){
+		for(let i in this.sprites){
+			this.sprites[i].rendererFrame()
+		}
+		for(let i in this.collections){
+			this.collections[i].rendererFrame()
+		}
 	}
-	pause(){
-		this.sprites.map((s)=>s.pause());
-		this.collections.map((c)=>c.pause());
+	physicsFrame(){
+		for(let i in this.sprites){
+			this.sprites[i].physicsFrame()
+		}
+		for(let i in this.collections){
+			this.collections[i].physicsFrame()
+		}
 	}
 }
 /**
@@ -57,38 +55,32 @@ export abstract class Collection implements Playable {
 */
 export abstract class Stage extends Collection{
 	abstract inputs:Input[]
+	private interval:number=-1;
+	/** Play the stage
+	* Call inputs[].play. Also call rendererFrame and physicsFrame
+	* regularally
+	*/
 	play(){
 		this.inputs.map((i)=>i.play())
-		super.play();
+		this.interval=setInterval(()=>{
+			//we may want these two to be on different intervals
+			this.rendererFrame();
+			this.physicsFrame();
+		},1000/80);
 	}
+	/** Pause the stage
+	* Call inputs[].pause. Also stop auto calling of rendererFrame and
+	* physicsFrame
+	*/
 	pause(){
 		this.inputs.map((i)=>i.pause())
-		super.pause();
+		clearInterval(this.interval);
 	}
 }
 /**
 * The base class for all games
 */
-export abstract class Game implements Playable{
-	/**
-	* Add a stage
-	* @param s The stage
-	*
-	add(s:Stage|Stage[]|{
-		[index:string]:Stage,
-		[index:number]:Stage,
-	}={},name?:string|number) { //TODO: Make overloads instead
-		if (s instanceof Stage) {
-			if(typeof name!=="undefined") this.stages[name]=s
-			else throw "Must supply name!"
-			if (this.stageID==-1) this.stageID=name;
-		}else if(typeof name!=="undefined") throw "Name not needed!"
-		else for(let i in s) {
-			this.stages[i]=s[i]//Allow for overriding
-			if (this.stageID==-1) this.stageID=i;
-		}
-	}*/
-
+export abstract class Game{
 	/**
 	* The current stage
 	*/
@@ -96,23 +88,20 @@ export abstract class Game implements Playable{
 	/**
 	* All stages
 	*/
-	stages:{
-		[index:string]:Stage,
-		[index:number]:Stage,
-	}={};
+	stages:Bundle<Stage>={};
 	/**
 	* Play the game
+	* @param id If supplied, sets [[stageID]]
 	*/
-	play() {
+	play(id?:number|string) {
+		if (typeof id!="undefined") this.stageID=id;
 		this.stages[this.stageID].play()
-		//return this
 	}
 	/**
 	* Pause the game
 	*/
 	pause() {
 		this.stages[this.stageID].pause()
-		//return this
 	}
 }
 

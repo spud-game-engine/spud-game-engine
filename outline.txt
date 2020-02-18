@@ -1,55 +1,22 @@
 GAME:
 	STAGE... extends [./COLLECTION]:
 		SPRITE...:
-			=> with SPRITE_INFO?,RENDERER{...?},PHYSICS
-				set SPRITE_INFO,RENDERER,PHYSICS
-				set GET_SPRITE_INFO on RENDERER,PHYSICS=>
-					return SPRITE_INFO
-				set SET_SPRITE_INFO on RENDERER,PHYSICS=> with I
-					update SPRITE_INFO from I
 			SPRITE_INFO:empty
-			RENDERER...:
-				=> with INFO?
-					set INFO
-				INFO:empty
-				GET_SPRITE_INFO=>empty
-				SET_SPRITE_INFO=>empty
-				FRAME=>
-					update INFO from call GET_SPRITE_INFO
-					draw
-				PLAY=>
-					call FRAME regularally
-				PAUSE=>
-					stop calling FRAME regularally
-			PHYSICS:
-				=> with INFO?
-					set INFO
-				INFO:empty
-				GET_SPRITE_INFO=>empty
-				SET_SPRITE_INFO=>empty
-				FRAME=>
-					update INFO from INFO
-					call UPDATE_SPRITE_INFO with INFO
-				PLAY=>
-					call FRAME regularally
-				PAUSE=>
-					stop calling FRAME regularally
-				" Arguable that these two are implimentation specific
-				MOVE=> with SAFE=TRUE,LOCATION...
-					update INFO " Wait for FRAME call
-				ROTATE=> with SAFE=TRUE,ROTATION...
-					update INFO
-			PLAY=>
-				call PLAY on RENDERER...,PHYSICS
-			PAUSE=>
-				call PAUSE on RENDERER...,PHYSICS
+			RENDER_INFO:empty
+			RENDER_FRAME=>
+				update RENDER_INFO from SPRITE_INFO
+				draw
+			PHYSICS_INFO:empty
+			PHYSICS_FRAME=>
+				update PHYSICS_INFO from PHYSICS_INFO
+				update SPRITE_INFO from PHYSICS_INFO
 		COLLECTION...:
 			SPRITE... impliments [../SPRITE]...
 			COLLECTION... impliments [../COLLECTION]...
-			PLAY=>
-				call PLAY on SPRITE...,COLLECTION...
-			PAUSE=>
-				call PAUSE on SPRITE...,COLLECTION...
+			RENDER_FRAME=>
+				call RENDER_FRAME on SPRITE...,COLLECTION...
+			PHYSICS_FRAME=>
+				call PHYSICS_FRAME on SPRITE...,COLLECTION...
 		INPUT...:
 			EVENT...=> with INFO
 				do something with INFO
@@ -61,9 +28,11 @@ GAME:
 			PAUSE=>
 				stop or ignore input
 		PLAY=>
-			call PLAY on INPUT...,SPRITE...,COLLECTION...
+			call PLAY on INPUT...
+			call RENDER_FRAME,PHYSICS_FRAME regularally
 		PAUSE=>
-			call PAUSE on INPUT...,SPRITE...,COLLECTION...
+			call PAUSE on INPUT...
+			stop calling RENDER_FRAME,PHYSICS_FRAME regularally
 	PLAY=>
 		call PLAY on STAGE...
 	PAUSE=>
