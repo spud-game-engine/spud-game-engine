@@ -7,25 +7,25 @@ export abstract class Input{
 	abstract play():void
 	/** Stop listening for input */
 	abstract pause():void
-	abstract events:{[index:string]:(info:any)=>any}
-	abstract trigger:(name:string,info?:any)=>any
+	events:{[index:string]:(info:any)=>any}={}
+	trigger(name:string,info?:any) {
+		this.events[name](info)
+	}
 }
-export interface SpriteInfo{}
 export interface RenderInfo{}
 export interface PhysicsInfo{}
 /**
 * An in-game object
 */
 export abstract class Sprite{
-	spriteInfo:SpriteInfo={}
 	renderInfo:RenderInfo={}
 	physicsInfo:PhysicsInfo={}
 	/** Draw the sprite
-	* Update [[renderInfo]] from [[spriteInfo]] then draw*/
-	abstract rendererFrame():void
+	* Update [[renderInfo]] from [[this]] then draw*/
+	rendererFrame:()=>void=()=>void 0
 	/** Update physics status of the sprite
-	* Update [[physicsInfo]], then update that to [[spriteInfo]]*/
-	abstract physicsFrame():void
+	* Update [[physicsInfo]], then update that to [[this]]*/
+	physicsFrame:()=>void=()=>void 0
 }
 /**
 * A collection of sprites

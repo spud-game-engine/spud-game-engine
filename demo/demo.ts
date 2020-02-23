@@ -1,32 +1,28 @@
-import{Stage,Renderer,Physics,Input,Sprite}from"../index"
+import{Stage,Input,Sprite}from"../lib/core"
 
 //Would be imported too
 class MyInput extends Input {
-	constructor() {
-		super()
+	play() {
 		window.addEventListener("keydown",(ev)=>{
 			this.trigger("inputDown",ev/*{
 				source:"keyboard"
 			}*/)
 		})
 	}
+	pause() {
+	}
 }
-class MyRenderer extends Renderer {}
-class MyPhysics extends Physics {}
-
 //They write
 /** The only player */
-class MySprite extends Sprite{
-	initPhysics(){}
-}
+class MySprite extends Sprite{}
 /** The only level */
 class MyStage extends Stage {
+	inputs=[new MyInput()];
 	constructor() {
-		super(new MyRenderer(10),
-			new MyPhysics(10),
-			[new MyInput()])
-		this.add(new MySprite(),"My sprite.")
-		this.on("inputUp",()=>alert("WOW!"))
+		super()
+		//this.add(new MySprite(),"My sprite.")
+		this.sprites["My sprite"]=new MySprite()
+		//this.on("inputUp",()=>alert("WOW!"))
 	}
 	initPhysics(){}
 }
