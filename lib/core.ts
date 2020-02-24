@@ -2,15 +2,21 @@ export interface Bundle<T>{
 	[index:string]:T,
 	[index:number]:T,
 }
-export abstract class Input{
+export abstract class EventHost{
+	events:{[index:string]:((info:any)=>any)[]}={}
+	trigger(name:string,info?:any):any[] {
+		return this.events[name].map((f)=>f(info));
+	}
+	on(name:string,handler:(info:any)=>any) {
+		if (typeof this.events[name]=="undefined") this.events[name]=[];
+		this.events[name].push(handler)
+	}
+}
+export abstract class Input extends EventHost {
 	/** Start listening for input */
 	abstract play():void
 	/** Stop listening for input */
 	abstract pause():void
-	events:{[index:string]:(info:any)=>any}={}
-	trigger(name:string,info?:any) {
-		this.events[name](info)
-	}
 }
 export interface RenderInfo{}
 export interface PhysicsInfo{}
@@ -30,7 +36,7 @@ export abstract class Sprite{
 /**
 * A collection of sprites
 */
-export abstract class Collection {
+export abstract class Collection extends EventHost{
 	sprites:Bundle<Sprite>={}
 	collections:Bundle<Collection>={}
 	rendererFrame(){
@@ -80,7 +86,7 @@ export abstract class Stage extends Collection{
 /**
 * The base class for all games
 */
-export abstract class Game{
+export abstract class Game extends EventHost{
 	/**
 	* The current stage
 	*/
