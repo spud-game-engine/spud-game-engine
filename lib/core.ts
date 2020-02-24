@@ -19,7 +19,13 @@ export abstract class Input extends EventHost {
 	abstract pause():void
 }
 export interface RenderInfo{}
+export abstract class Renderer{
+	abstract __frame:()=>void
+}
 export interface PhysicsInfo{}
+export abstract class Physics{
+	abstract __frame:()=>void
+}
 /**
 * An in-game object
 */
@@ -32,13 +38,17 @@ export abstract class Sprite{
 	/** Update physics status of the sprite
 	* Update [[physicsInfo]], then update that to [[this]]*/
 	physicsFrame:()=>void=()=>void 0
+	constructor(collection:Collection){
+		this.rendererFrame=collection.renderer.__frame
+		this.physicsFrame=collection.physics.__frame
+	}
 }
 /**
 * A collection of sprites
 */
 export abstract class Collection extends EventHost{
-	sprites:Bundle<Sprite>={}
-	collections:Bundle<Collection>={}
+	abstract sprites:Bundle<Sprite>
+	abstract collections:Bundle<Collection>
 	rendererFrame(){
 		for(let i in this.sprites){
 			this.sprites[i].rendererFrame()
@@ -55,12 +65,19 @@ export abstract class Collection extends EventHost{
 			this.collections[i].physicsFrame()
 		}
 	}
+	renderer:Renderer
+	physics:Physics
+	constructor(renderer:Renderer,physics:Physics){
+		super()
+		this.renderer=renderer
+		this.physics=physics
+	}
 }
 /**
 * A container for sprites, often a level
 */
 export abstract class Stage extends Collection{
-	abstract inputs:Input[]
+	inputs:Input[]
 	private interval:number=-1;
 	/** Play the stage
 	* Call inputs[].play. Also call rendererFrame and physicsFrame
@@ -82,11 +99,16 @@ export abstract class Stage extends Collection{
 		this.inputs.map((i)=>i.pause())
 		clearInterval(this.interval);
 	}
+	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
+		super(renderer,physics)
+		if(input instanceof Input) input=[input];
+		this.inputs=input;
+	}
 }
 /**
 * The base class for all games
 */
-export abstract class Game extends EventHost{
+export abstract class Game{
 	/**
 	* The current stage
 	*/
