@@ -48,7 +48,6 @@ export abstract class Sprite{
 */
 export abstract class Collection extends EventHost{
 	abstract items:Bundle<Sprite|Collection>
-	//collections:Bundle<Collection>={}
 	rendererFrame(){
 		for(let i in this.items){
 			this.items[i].rendererFrame()
