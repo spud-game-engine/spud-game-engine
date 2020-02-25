@@ -1,4 +1,4 @@
-import{Stage,Input,Sprite}from"../lib/core"
+import{Stage,Input,Sprite,Renderer,Physics}from"../lib/core"
 
 //Would be imported too
 class MyInput extends Input {
@@ -12,19 +12,24 @@ class MyInput extends Input {
 	pause() {
 	}
 }
+class MyRenderer extends Renderer{
+	__frame=()=>{}
+}
+class MyPhysics extends Physics{
+	__frame=()=>{}
+}
 //They write
 /** The only player */
 class MySprite extends Sprite{}
 /** The only level */
 class MyStage extends Stage {
-	inputs=[new MyInput()];
+	items={
+		"My sprite":new MySprite(this),
+	}
 	constructor() {
-		super()
-		//this.add(new MySprite(),"My sprite.")
-		this.sprites["My sprite"]=new MySprite()
+		super(new MyRenderer(),new MyPhysics(),new MyInput())
 		//this.on("inputUp",()=>alert("WOW!"))
 	}
-	initPhysics(){}
 }
 new MyStage().play();//We don't need the game class if there's only one stage
 
