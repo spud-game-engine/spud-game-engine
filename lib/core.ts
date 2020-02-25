@@ -47,23 +47,23 @@ export abstract class Sprite{
 * A collection of sprites
 */
 export abstract class Collection extends EventHost{
-	abstract sprites:Bundle<Sprite>
-	abstract collections:Bundle<Collection>
+	abstract items:Bundle<Sprite|Collection>
+	//collections:Bundle<Collection>={}
 	rendererFrame(){
-		for(let i in this.sprites){
-			this.sprites[i].rendererFrame()
+		for(let i in this.items){
+			this.items[i].rendererFrame()
 		}
-		for(let i in this.collections){
-			this.collections[i].rendererFrame()
-		}
+		//for(let i in this.collections){
+			//this.collections[i].rendererFrame()
+		//}
 	}
 	physicsFrame(){
-		for(let i in this.sprites){
-			this.sprites[i].physicsFrame()
+		for(let i in this.items){
+			this.items[i].physicsFrame()
 		}
-		for(let i in this.collections){
-			this.collections[i].physicsFrame()
-		}
+		//for(let i in this.collections){
+			//this.collections[i].physicsFrame()
+		//}
 	}
 	renderer:Renderer
 	physics:Physics
