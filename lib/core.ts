@@ -30,6 +30,10 @@ export abstract class Physics{
 * An in-game object
 */
 export abstract class Sprite{
+	constructor(collection:Collection){
+		this.rendererFrame=collection.renderer.__frame
+		this.physicsFrame=collection.physics.__frame
+	}
 	renderInfo:RenderInfo={}
 	physicsInfo:PhysicsInfo={}
 	/** Draw the sprite
@@ -38,44 +42,39 @@ export abstract class Sprite{
 	/** Update physics status of the sprite
 	* Update [[physicsInfo]], then update that to [[this]]*/
 	physicsFrame:()=>void=()=>void 0
-	constructor(collection:Collection){
-		this.rendererFrame=collection.renderer.__frame
-		this.physicsFrame=collection.physics.__frame
-	}
 }
 /**
 * A collection of sprites
 */
 export abstract class Collection extends EventHost{
-	abstract items:Bundle<Sprite|Collection>
-	rendererFrame(){
-		for(let i in this.items){
-			this.items[i].rendererFrame()
-		}
-		//for(let i in this.collections){
-			//this.collections[i].rendererFrame()
-		//}
-	}
-	physicsFrame(){
-		for(let i in this.items){
-			this.items[i].physicsFrame()
-		}
-		//for(let i in this.collections){
-			//this.collections[i].physicsFrame()
-		//}
-	}
-	renderer:Renderer
-	physics:Physics
 	constructor(renderer:Renderer,physics:Physics){
 		super()
 		this.renderer=renderer
 		this.physics=physics
 	}
+	abstract items:Bundle<Sprite|Collection>
+	rendererFrame(){
+		for(let i in this.items){
+			this.items[i].rendererFrame()
+		}
+	}
+	physicsFrame(){
+		for(let i in this.items){
+			this.items[i].physicsFrame()
+		}
+	}
+	renderer:Renderer
+	physics:Physics
 }
 /**
 * A container for sprites, often a level
 */
 export abstract class Stage extends Collection{
+	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
+		super(renderer,physics)
+		if(input instanceof Input) input=[input];
+		this.inputs=input;
+	}
 	inputs:Input[]
 	private interval:number=-1;
 	/** Play the stage
@@ -97,11 +96,6 @@ export abstract class Stage extends Collection{
 	pause(){
 		this.inputs.map((i)=>i.pause())
 		clearInterval(this.interval);
-	}
-	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
-		super(renderer,physics)
-		if(input instanceof Input) input=[input];
-		this.inputs=input;
 	}
 }
 /**
