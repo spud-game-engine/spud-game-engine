@@ -1,3 +1,4 @@
+//TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
 export interface Bundle<T>{
 	[index:string]:T,
 	[index:number]:T,
@@ -83,7 +84,7 @@ export abstract class Stage extends Collection{
 	*/
 	play(){
 		this.inputs.map((i)=>i.play())
-		this.interval=setInterval(()=>{
+		this.interval=window.setInterval(()=>{//TODO: Not a great fix
 			//we may want these two to be on different intervals
 			this.rendererFrame();
 			this.physicsFrame();
