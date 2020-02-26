@@ -6,8 +6,7 @@ The Spud Game Engine plans to be a highly modular (and highly integrated) game
 engine that fixes these problems that I always seem to encounter in JavaScript
 game engines:
 
-* Small size. You don't need to have the whole thing downloaded to be able to
-make a simple game.
+* Small size. You only need to download the parts that you will use.
 * High preformance. I've made plenty of Indie JavaScript games _with_ and
 _without_ engines, and the ones _without_ usually are 5 times more preformant.
 I'd also like to point out that with all of these games, I started by making a
