@@ -3,11 +3,28 @@ export interface Bundle<T>{
 	[index:string]:T,
 	[index:number]:T,
 }
+/** A class that allows for calling and registering event handlers */
 export abstract class EventHost{
+	/**
+	 * The container for the event handlers
+	 */
 	events:{[index:string]:((info:any)=>any)[]}={}
+	/**
+	 * Trigger an event
+	 * 
+	 * @param name The name of the event.
+	 * @param info The optional information about the event.
+	 * @return An array of the returns of the event handlers
+	 */
 	trigger(name:string,info?:any):any[] {
 		return this.events[name].map((f)=>f(info));
 	}
+	/**
+	 * Bind an event handler.
+	 *
+	 * @param name The name of the event.
+	 * @param handler The new event handler.
+	 */
 	on(name:string,handler:(info:any)=>any) {
 		if (typeof this.events[name]=="undefined") this.events[name]=[];
 		this.events[name].push(handler)
@@ -48,12 +65,15 @@ export abstract class Sprite{
 * A collection of sprites
 */
 export abstract class Collection extends EventHost{
+	/** Make a new collection */
 	constructor(renderer:Renderer,physics:Physics){
 		super()
 		this.renderer=renderer
 		this.physics=physics
 	}
+	/** The items stored within the collection. */
 	abstract items:Bundle<Sprite|Collection>
+	/** Call all [[Sprite.rendererFrame]] and [[Collection.rendererFrame]]s */
 	rendererFrame(){
 		for(let i in this.items){
 			this.items[i].rendererFrame()
@@ -64,7 +84,9 @@ export abstract class Collection extends EventHost{
 			this.items[i].physicsFrame()
 		}
 	}
+	/** The a reference to the renderer engine */
 	renderer:Renderer
+	/** The a reference to the physics engine */
 	physics:Physics
 }
 /**
