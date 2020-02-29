@@ -52,8 +52,8 @@ export abstract class Sprite{
 		this.rendererFrame=collection.renderer.__frame
 		this.physicsFrame=collection.physics.__frame
 	}
-	renderInfo:RenderInfo={}
-	physicsInfo:PhysicsInfo={}
+	abstract renderInfo:RenderInfo
+	abstract physicsInfo:PhysicsInfo
 	/** Draw the sprite
 	* Update [[renderInfo]] from [[this]] then draw*/
 	rendererFrame:()=>void=()=>void 0
