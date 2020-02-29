@@ -20,15 +20,20 @@ class MyPhysics extends Physics{
 }
 //They write
 /** The only player */
-class MySprite extends Sprite{}
+class MySprite extends Sprite{
+	physicsInfo={}
+	renderInfo={}
+}
 /** The only level */
 class MyStage extends Stage {
 	items={
-		"My sprite":new MySprite(this),
+		sprite:new MySprite(this),
 	}
 	constructor() {
 		super(new MyRenderer(),new MyPhysics(),new MyInput())
-		//this.on("inputUp",()=>alert("WOW!"))
+		this.on("inputUp",()=>{
+			this.items.sprite.move("safe").up(1)
+		})
 	}
 }
 new MyStage().play();//We don't need the game class if there's only one stage
