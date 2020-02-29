@@ -6,3 +6,4 @@ coverage
 dist
 docs
 .nyc_output
+*.lock
