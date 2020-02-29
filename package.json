@@ -26,7 +26,7 @@
     "watch:all":"yarn watch:build & yarn watch:test",
     "watch":"yarn watch:all",
     "build:typescript":"tsc && tsc -p tsconfig.es3.json",
-    "build:typedoc":"typedoc --out docs lib",
+    "build:typedoc":"typedoc --out docs src",
     "build:all":"yarn build:typescript && yarn build:typedoc",
     "build":"yarn build:all",
     "coverage":"nyc report --reporter=text-lcov | coveralls"
@@ -41,7 +41,7 @@
   "homepage":"https://github.com/spud-game-engine/spud-game-engine#readme",
   "directories":{
     "doc":"docs",
-    "lib":"lib",
+    "src":"src",
     "test":"test"
   },
   "nyc":{

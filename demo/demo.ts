@@ -1,4 +1,4 @@
-import{Stage,Input,Sprite,Renderer,Physics}from"../lib/core"
+import{Stage,Input,Sprite,Renderer,Physics}from"../src/core"
 
 //Would be imported too
 class MyInput extends Input {
