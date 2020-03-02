@@ -8,7 +8,9 @@ export abstract class EventHost{
 	/**
 	 * The container for the event handlers
 	 */
-	events:{[index:string]:((info:any)=>any)[]}={}
+	events:{
+		[index:string]:((info:any)=>number)[]
+	}={}
 	/**
 	 * Trigger an event
 	 * 
@@ -16,8 +18,13 @@ export abstract class EventHost{
 	 * @param info The optional information about the event.
 	 * @return An array of the returns of the event handlers
 	 */
-	trigger(name:string,info?:any):any[] {
-		return this.events[name].map((f)=>f(info));
+	trigger(name:string,info?:any):Promise<number[]> {
+		//return this.events[name].map((f)=>f(info));
+		return Promise.all( //TODO: add Promise polyfill. TODO: This is completly wrong. Just use a lib
+			this.events[name].map(
+				(eventHandler)=>
+					//()=>
+					eventHandler(info)))
 	}
 	/**
 	 * Bind an event handler.
