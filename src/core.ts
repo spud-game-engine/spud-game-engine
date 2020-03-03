@@ -47,6 +47,11 @@ export interface PhysicsInfo{}
 export abstract class Physics{
 	abstract __frame:()=>void
 }
+export interface Move{
+	to(...location:number[]):Move
+	by(...location:number[]):Move
+}
+//TODO: use the Node based design scheme. Sprites should inherit from nodes, and collections are useless, as nodes can carry other nodes.
 /**
 * An in-game object
 */
@@ -63,6 +68,27 @@ export abstract class Sprite{
 	/** Update physics status of the sprite
 	* Update [[physicsInfo]], then update that to [[this]]*/
 	physicsFrame:()=>void=()=>void 0
+	private genericMove(safe:boolean):Move{
+		let out:Move={
+			to(...location){
+				console.log(`Moved to ${location}!`)
+				if(safe) console.log("this was safe")
+				return out;
+			},
+			by(...location){
+				console.log(`Moved by ${location}!`)
+				if(safe) console.log("this was safe")
+				return out;
+			}
+		}
+		return out;
+	}
+	safeMove():Move{
+		return this.genericMove(true);
+	}
+	unsafeMove():Move{
+		return this.genericMove(false);
+	}
 }
 /**
 * A collection of sprites
