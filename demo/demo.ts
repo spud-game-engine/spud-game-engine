@@ -3,11 +3,12 @@ import{Stage,Input,Sprite,Renderer,Physics}from"../src/core"
 //Would be imported too
 class MyInput extends Input {
 	play() {
-		window.addEventListener("keydown",(ev)=>{
+		setTimeout(()=>this.trigger("inputDown",{}),3000);
+		/*window.addEventListener("keydown",(ev)=>{
 			this.trigger("inputDown",ev/*{
 				source:"keyboard"
-			}*/)
-		})
+			}*)
+		})*/
 	}
 	pause() {
 	}
@@ -26,13 +27,11 @@ class MySprite extends Sprite{
 }
 /** The only level */
 class MyStage extends Stage {
-	items={
-		sprite:new MySprite(this),
-	}
 	constructor() {
 		super(new MyRenderer(),new MyPhysics(),new MyInput())
+		this.sprites.mySprite=new MySprite(this);
 		this.on("inputUp",()=>{
-			this.items.sprite.move("safe").up(1)
+			this.sprites.mySprite.safeMove().by(0,1)
 		})
 	}
 }
