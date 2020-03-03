@@ -34,6 +34,6 @@
 		"strictPropertyInitialization": true
 	},
 	"include": [
-		"src","test/*.*",
+		"src","test/*.*","demo"
 	]
 }
