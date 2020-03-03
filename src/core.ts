@@ -1,8 +1,4 @@
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
-export interface Bundle<T>{
-	[index:string]:T,
-	[index:number]:T,
-}
 /** A class that allows for calling and registering event handlers */
 export abstract class EventHost{
 	/**
@@ -79,21 +75,28 @@ export abstract class Collection extends EventHost{
 		this.physics=physics
 	}
 	/** The items stored within the collection. */
-	abstract items:Bundle<Sprite|Collection>
+	sprites:{[index:string]:Sprite}={}
+	collections:{[index:string]:Collection}={}
 	/** Call all [[Sprite.rendererFrame]] and [[Collection.rendererFrame]]s */
 	rendererFrame(){
-		for(let i in this.items){
-			this.items[i].rendererFrame()
+		for(let i in this.sprites){
+			this.sprites[i].rendererFrame()
+		}
+		for(let i in this.collections){
+			this.collections[i].rendererFrame()
 		}
 	}
 	physicsFrame(){
-		for(let i in this.items){
-			this.items[i].physicsFrame()
+		for(let i in this.sprites){
+			this.sprites[i].physicsFrame()
+		}
+		for(let i in this.collections){
+			this.collections[i].physicsFrame()
 		}
 	}
-	/** The a reference to the renderer engine */
+	/** The reference to the renderer engine */
 	renderer:Renderer
-	/** The a reference to the physics engine */
+	/** The reference to the physics engine */
 	physics:Physics
 }
 /**
@@ -139,7 +142,7 @@ export abstract class Game{
 	/**
 	* All stages
 	*/
-	stages:Bundle<Stage>={};
+	stages:{[index:string]:Stage}={};
 	/**
 	* Play the game
 	* @param id If supplied, sets [[stageID]]
