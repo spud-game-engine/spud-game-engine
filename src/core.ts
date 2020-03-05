@@ -1,39 +1,7 @@
+//import interval from 'interval-promise'
+import EventEmitter from 'events-async'
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
-/** A class that allows for calling and registering event handlers */
-export abstract class EventHost{
-	/**
-	 * The container for the event handlers
-	 */
-	events:{
-		[index:string]:((info:any)=>number)[]
-	}={}
-	/**
-	 * Trigger an event
-	 * 
-	 * @param name The name of the event.
-	 * @param info The optional information about the event.
-	 * @return An array of the returns of the event handlers
-	 */
-	trigger(name:string,info?:any):Promise<number[]> {
-		//return this.events[name].map((f)=>f(info));
-		return Promise.all( //TODO: add Promise polyfill. TODO: This is completly wrong. Just use a lib
-			this.events[name].map(
-				(eventHandler)=>
-					//()=>
-					eventHandler(info)))
-	}
-	/**
-	 * Bind an event handler.
-	 *
-	 * @param name The name of the event.
-	 * @param handler The new event handler.
-	 */
-	on(name:string,handler:(info:any)=>any) {
-		if (typeof this.events[name]=="undefined") this.events[name]=[];
-		this.events[name].push(handler)
-	}
-}
-export abstract class Input extends EventHost {
+export abstract class Input extends EventEmitter{
 	/** Start listening for input */
 	abstract play():void
 	/** Stop listening for input */
@@ -93,7 +61,7 @@ export abstract class Sprite{
 /**
 * A collection of sprites
 */
-export abstract class Collection extends EventHost{
+export abstract class Collection extends EventEmitter{
 	/** Make a new collection */
 	constructor(renderer:Renderer,physics:Physics){
 		super()
@@ -135,27 +103,45 @@ export abstract class Stage extends Collection{
 		this.inputs=input;
 	}
 	inputs:Input[]
-	private interval:number=-1;
+	/** To be called on every frame of the game loop */
+	frame() {
+		this.rendererFrame();
+		this.physicsFrame();
+	}
+	//private interval:number=-1;
+	//private __playing=false;
 	/** Play the stage
-	* Call inputs[].play. Also call rendererFrame and physicsFrame
-	* regularally
-	*/
-	play(){
+	 * Call inputs[].play. Also start calling this.frame regularrally
+	 */
+   	abstract play():void
+	/*play(){
 		this.inputs.map((i)=>i.play())
+		this.__playing=true;
+		let loop =async (iteration:number,stop:()=>void)=>{
+			if (!this.__playing) {
+				//This log was literally put here to appease the great linter gods
+				console.log(`Stopped at iteration ${iteration}`);
+				return stop()
+			}
+			this.rendererFrame()
+			this.physicsFrame()
+		}
+		interval(loop,1000/80);//TODO: let them decide the frequency?
+		/*
 		this.interval=window.setInterval(()=>{//TODO: Not a great fix
 			//we may want these two to be on different intervals
 			this.rendererFrame();
 			this.physicsFrame();
 		},1000/80);
-	}
+	    *
+	}*/
 	/** Pause the stage
-	* Call inputs[].pause. Also stop auto calling of rendererFrame and
-	* physicsFrame
-	*/
-	pause(){
-		this.inputs.map((i)=>i.pause())
-		clearInterval(this.interval);
-	}
+	 * Call inputs[].pause. Also stop auto calling this.frame
+	 */
+	abstract play():void
+	/*pause(){
+		this.__playing=false;
+	}*/
 }
 /**
 * The base class for all games
