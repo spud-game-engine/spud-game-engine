@@ -138,7 +138,7 @@ export abstract class Stage extends Collection{
 	/** Pause the stage
 	 * Call inputs[].pause. Also stop auto calling this.frame
 	 */
-	abstract play():void
+	abstract pause():void
 	/*pause(){
 		this.__playing=false;
 	}*/
