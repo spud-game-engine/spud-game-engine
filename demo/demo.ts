@@ -14,10 +14,10 @@ class MyInput extends Input {
 	}
 }
 class MyRenderer extends Renderer{
-	__frame=()=>{}
+	__frame(){}
 }
 class MyPhysics extends Physics{
-	__frame=()=>{}
+	__frame(){}
 }
 //They write
 /** The only player */

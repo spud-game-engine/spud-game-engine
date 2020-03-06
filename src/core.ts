@@ -9,11 +9,19 @@ export abstract class Input extends EventEmitter{
 }
 export interface RenderInfo{}
 export abstract class Renderer{
-	abstract __frame:()=>void
+	abstract __frame(sprite:Sprite):void
+	/** Bind a given sprite to call [[__frame]] on the `"render"` event */
+	attach(sprite:Sprite) {
+		sprite.on("render",()=>this.__frame(sprite));
+	}
 }
 export interface PhysicsInfo{}
 export abstract class Physics{
-	abstract __frame:()=>void
+	abstract __frame(sprite:Sprite):void
+	/** Bind a given sprite to call [[__frame]] on the `"physics"` event */
+	attach(sprite:Sprite){
+		sprite.on("physics",()=>this.__frame(sprite));
+	}
 }
 export interface Move{
 	to(...location:number[]):Move
@@ -25,17 +33,14 @@ export interface Move{
 */
 export abstract class Sprite{
 	constructor(collection:Collection){
-		this.rendererFrame=collection.renderer.__frame
-		this.physicsFrame=collection.physics.__frame
+		super()
+		collection.renderer.attach(this);
+		collection.physics.attach(this);
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
-	/** Draw the sprite
-	* Update [[renderInfo]] from [[this]] then draw*/
-	rendererFrame:()=>void=()=>void 0
 	/** Update physics status of the sprite
 	* Update [[physicsInfo]], then update that to [[this]]*/
-	physicsFrame:()=>void=()=>void 0
 	private genericMove(safe:boolean):Move{
 		let out:Move={
 			to(...location){
@@ -74,7 +79,7 @@ export abstract class Collection extends EventEmitter{
 	/** Call all [[Sprite.rendererFrame]] and [[Collection.rendererFrame]]s */
 	rendererFrame(){
 		for(let i in this.sprites){
-			this.sprites[i].rendererFrame()
+			this.sprites[i].emit("render");
 		}
 		for(let i in this.collections){
 			this.collections[i].rendererFrame()
@@ -82,7 +87,7 @@ export abstract class Collection extends EventEmitter{
 	}
 	physicsFrame(){
 		for(let i in this.sprites){
-			this.sprites[i].physicsFrame()
+			this.sprites[i].emit("render")
 		}
 		for(let i in this.collections){
 			this.collections[i].physicsFrame()
