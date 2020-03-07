@@ -31,7 +31,7 @@ export interface Move{
 /**
 * An in-game object
 */
-export abstract class Sprite{
+export abstract class Sprite extends EventEmitter{
 	constructor(collection:Collection){
 		super()
 		collection.renderer.attach(this);
@@ -72,27 +72,26 @@ export abstract class Collection extends EventEmitter{
 		super()
 		this.renderer=renderer
 		this.physics=physics
+		this.on("render",()=>{
+			for(let i in this.sprites){
+				this.sprites[i].emit("render");
+			}
+			for(let i in this.collections){
+				this.collections[i].emit("render");
+			}
+		})
+		this.on("physics",()=>{
+			for(let i in this.sprites){
+				this.sprites[i].emit("physics")
+			}
+			for(let i in this.collections){
+				this.collections[i].emit("physics");
+			}
+		})
 	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
 	collections:{[index:string]:Collection}={}
-	/** Call all [[Sprite.rendererFrame]] and [[Collection.rendererFrame]]s */
-	rendererFrame(){
-		for(let i in this.sprites){
-			this.sprites[i].emit("render");
-		}
-		for(let i in this.collections){
-			this.collections[i].rendererFrame()
-		}
-	}
-	physicsFrame(){
-		for(let i in this.sprites){
-			this.sprites[i].emit("render")
-		}
-		for(let i in this.collections){
-			this.collections[i].physicsFrame()
-		}
-	}
 	/** The reference to the renderer engine */
 	renderer:Renderer
 	/** The reference to the physics engine */
@@ -110,8 +109,8 @@ export abstract class Stage extends Collection{
 	inputs:Input[]
 	/** To be called on every frame of the game loop */
 	frame() {
-		this.rendererFrame();
-		this.physicsFrame();
+		this.emit("render")
+		this.emit("physics")
 	}
 	//private interval:number=-1;
 	//private __playing=false;
