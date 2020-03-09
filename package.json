@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "events-async": "^1.2.1",
-    "interval-promise": "^1.4.0"
+    "set-interval-async": "^1.0.30"
   },
   "scripts": {
     "prepare": "yarn build",
