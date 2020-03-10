@@ -13,7 +13,7 @@
 		//"sourceMap":true,//Both of these may bee a bad idea
 		//"declarationMap":true,
 
-		//"importHelpers": true,
+		"importHelpers": true,
 		/*if using this, also use
     "tslib":"^1.10.0"
 		*/

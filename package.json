@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "events-async": "^1.2.1",
-    "set-interval-async": "^1.0.30"
+    "set-interval-async": "^1.0.30",
+    "tslib": "^1.11.1"
   },
   "scripts": {
     "prepare": "yarn build",
