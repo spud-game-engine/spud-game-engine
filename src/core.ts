@@ -1,5 +1,7 @@
 //import interval from 'interval-promise'
 import EventEmitter from 'events-async'
+//Look into `npm i wolfy87-eventemitter` github https://github.com/Olical/EventEmitter
+ //Compare to https://github.com/primus/EventEmitter3 more at https://www.npmjs.com/search?q=eventemitter
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
 export abstract class Input extends EventEmitter{
 	/** Start listening for input */
@@ -15,7 +17,15 @@ export abstract class Renderer{
 		sprite.on("render",()=>this.__frame(sprite));
 	}
 }
-export interface PhysicsInfo{}
+export interface Move{
+	to(...location:number[]):Move
+	by(...location:number[]):Move
+}
+export interface PhysicsInfo{
+	move(params:{
+		safe:boolean
+	}):Move
+}
 export abstract class Physics{
 	abstract __frame(sprite:Sprite):void
 	/** Bind a given sprite to call [[__frame]] on the `"physics"` event */
@@ -23,11 +33,6 @@ export abstract class Physics{
 		sprite.on("physics",()=>this.__frame(sprite));
 	}
 }
-export interface Move{
-	to(...location:number[]):Move
-	by(...location:number[]):Move
-}
-//TODO: use the Node based design scheme. Sprites should inherit from nodes, and collections are useless, as nodes can carry other nodes.
 /**
 * An in-game object
 */
@@ -39,28 +44,12 @@ export abstract class Sprite extends EventEmitter{
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
-	/** Update physics status of the sprite
-	* Update [[physicsInfo]], then update that to [[this]]*/
-	private genericMove(safe:boolean):Move{
-		let out:Move={
-			to(...location){
-				console.log(`Moved to ${location}!`)
-				if(safe) console.log("this was safe")
-				return out;
-			},
-			by(...location){
-				console.log(`Moved by ${location}!`)
-				if(safe) console.log("this was safe")
-				return out;
-			}
-		}
-		return out;
-	}
-	safeMove():Move{
-		return this.genericMove(true);
-	}
-	unsafeMove():Move{
-		return this.genericMove(false);
+	move(params:{
+		safe:boolean
+	}={
+		safe:true
+	}):Move{
+		return this.physicsInfo.move(params);
 	}
 }
 /**
@@ -72,22 +61,8 @@ export abstract class Collection extends EventEmitter{
 		super()
 		this.renderer=renderer
 		this.physics=physics
-		this.on("render",()=>{
-			for(let i in this.sprites){
-				this.sprites[i].emit("render");
-			}
-			for(let i in this.collections){
-				this.collections[i].emit("render");
-			}
-		})
-		this.on("physics",()=>{
-			for(let i in this.sprites){
-				this.sprites[i].emit("physics")
-			}
-			for(let i in this.collections){
-				this.collections[i].emit("physics");
-			}
-		})
+	    this.pass("render");
+	    this.pass("physics");
 	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
@@ -96,6 +71,25 @@ export abstract class Collection extends EventEmitter{
 	renderer:Renderer
 	/** The reference to the physics engine */
 	physics:Physics
+	/**
+	 * Pass given event to children
+	 *
+	 * When this object receives this event, it will call it on all child sprites
+	 * and child collections.
+	 * 
+	 * @param str The name of the event.
+	 */
+	pass(str:string){
+		this.on(str,()=>{
+			for(let i in this.sprites){
+				this.sprites[i].emit(str)
+			}
+			for(let i in this.collections){
+				this.collections[i].emit(str);
+			}
+		})
+		//TODO: return false to prevent raising & rehitting?
+	}
 }
 /**
 * A container for sprites, often a level
