@@ -24,7 +24,7 @@
   },
   "scripts": {
     "prepare": "yarn build",
-    "test": "yarn build && nyc intern",
+    "test": "nyc intern",
     "watch:test": "intern --watch",
     "watch:build": "tsc --watch",
     "watch:all": "yarn watch:build & yarn watch:test",

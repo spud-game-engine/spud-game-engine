@@ -22,7 +22,14 @@ class MyPhysics extends Physics{
 //They write
 /** The only player */
 class MySprite extends Sprite{
-	physicsInfo={}
+	physicsInfo={
+		move:()=>{
+			return {
+				to:()=>this.move(),
+				by:()=>this.move()
+			};
+		}
+	}
 	renderInfo={}
 }
 /** The only level */
@@ -31,7 +38,7 @@ class MyStage extends Stage {
 		super(new MyRenderer(),new MyPhysics(),new MyInput())
 		this.sprites.mySprite=new MySprite(this);
 		this.on("inputUp",()=>{
-			this.sprites.mySprite.safeMove().by(0,1)
+			this.sprites.mySprite.move({safe:true}).by(0,1)
 		})
 	}
 	private interval:any=-1//Type any is easiest way to work around stupid bug. Should be number or Interval
