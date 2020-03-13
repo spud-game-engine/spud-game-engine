@@ -1,9 +1,8 @@
 //import interval from 'interval-promise'
-import EventEmitter from 'events-async'
 //Look into `npm i wolfy87-eventemitter` github https://github.com/Olical/EventEmitter
  //Compare to https://github.com/primus/EventEmitter3 more at https://www.npmjs.com/search?q=eventemitter
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
-export abstract class Input extends EventEmitter{
+export abstract class Input{
 	/** Start listening for input */
 	abstract play():void
 	/** Stop listening for input */
@@ -14,7 +13,7 @@ export abstract class Renderer{
 	abstract __frame(sprite:Sprite):void
 	/** Bind a given sprite to call [[__frame]] on the `"render"` event */
 	attach(sprite:Sprite) {
-		sprite.on("render",()=>this.__frame(sprite));
+		sprite.render=()=>this.__frame(sprite);//TODO: Improove
 	}
 }
 export interface Move{
@@ -30,20 +29,21 @@ export abstract class Physics{
 	abstract __frame(sprite:Sprite):void
 	/** Bind a given sprite to call [[__frame]] on the `"physics"` event */
 	attach(sprite:Sprite){
-		sprite.on("physics",()=>this.__frame(sprite));
+		sprite.physics_loop=()=>this.__frame(sprite);
 	}
 }
 /**
 * An in-game object
 */
-export abstract class Sprite extends EventEmitter{
+export abstract class Sprite{ 
 	constructor(collection:Collection){
-		super()
 		collection.renderer.attach(this);
 		collection.physics.attach(this);
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
+	render:()=>void=()=>undefined
+	physics_loop:()=>void=()=>undefined
 	move(params:{
 		safe:boolean
 	}={
@@ -55,14 +55,14 @@ export abstract class Sprite extends EventEmitter{
 /**
 * A collection of sprites
 */
-export abstract class Collection extends EventEmitter{
+export abstract class Collection{ 
 	/** Make a new collection */
 	constructor(renderer:Renderer,physics:Physics){
-		super()
 		this.renderer=renderer
 		this.physics=physics
-	    this.pass("render");
-	    this.pass("physics");
+		//TODO: pass these "events"
+	    //this.pass("render");
+	    //this.pass("physics");
 	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
@@ -71,25 +71,6 @@ export abstract class Collection extends EventEmitter{
 	renderer:Renderer
 	/** The reference to the physics engine */
 	physics:Physics
-	/**
-	 * Pass given event to children
-	 *
-	 * When this object receives this event, it will call it on all child sprites
-	 * and child collections.
-	 * 
-	 * @param str The name of the event.
-	 */
-	pass(str:string){
-		this.on(str,()=>{
-			for(let i in this.sprites){
-				this.sprites[i].emit(str)
-			}
-			for(let i in this.collections){
-				this.collections[i].emit(str);
-			}
-		})
-		//TODO: return false to prevent raising & rehitting?
-	}
 }
 /**
 * A container for sprites, often a level
@@ -103,9 +84,11 @@ export abstract class Stage extends Collection{
 	inputs:Input[]
 	/** To be called on every frame of the game loop */
 	frame() {
-		this.emit("render")
-		this.emit("physics")
+		this.render();
+		this.physics_loop();
 	}
+	render:()=>void=()=>undefined
+	physics_loop:()=>void=()=>undefined
 	//private interval:number=-1;
 	//private __playing=false;
 	/** Play the stage
