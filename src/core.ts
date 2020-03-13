@@ -1,6 +1,4 @@
 //import interval from 'interval-promise'
-//Look into `npm i wolfy87-eventemitter` github https://github.com/Olical/EventEmitter
- //Compare to https://github.com/primus/EventEmitter3 more at https://www.npmjs.com/search?q=eventemitter
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
 export abstract class Input{
 	/** Start listening for input */
@@ -10,20 +8,23 @@ export abstract class Input{
 }
 export interface RenderInfo{}
 export abstract class Renderer{
-	abstract __frame(sprite:Sprite):void
+	abstract render(sprite:Sprite):void
 	/** Bind a given sprite to call [[__frame]] on the `"render"` event */
-	attach(sprite:Sprite) {
-		sprite.render=()=>this.__frame(sprite);//TODO: Improove
-	}
+	/*attach(sprite:Sprite) {
+		sprite.renderer=this;
+		//sprite.render=()=>this.__frame(sprite);//TODO: Improove
+	}*/
 }
 export interface Move{
 	to(...location:number[]):Move
 	by(...location:number[]):Move
 }
 export interface PhysicsInfo{
+	/*
 	move(params:{
 		safe:boolean
 	}):Move
+    */
 }
 export abstract class Physics{
 	abstract __frame(sprite:Sprite):void
@@ -37,20 +38,25 @@ export abstract class Physics{
 */
 export abstract class Sprite{ 
 	constructor(collection:Collection){
-		collection.renderer.attach(this);
-		collection.physics.attach(this);
+		this.renderer=collection.renderer
+		collection.physics.attach(this);//TODO: make good again
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
-	render:()=>void=()=>undefined
+	renderer:Renderer
+	render() {
+		return this.renderer.render(this);
+	}
 	physics_loop:()=>void=()=>undefined
-	move(params:{
+	//TODO: add move again
+	/*move(params:{
 		safe:boolean
 	}={
 		safe:true
 	}):Move{
 		return this.physicsInfo.move(params);
 	}
+	*/
 }
 /**
 * A collection of sprites
@@ -60,9 +66,6 @@ export abstract class Collection{
 	constructor(renderer:Renderer,physics:Physics){
 		this.renderer=renderer
 		this.physics=physics
-		//TODO: pass these "events"
-	    //this.pass("render");
-	    //this.pass("physics");
 	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
@@ -71,6 +74,22 @@ export abstract class Collection{
 	renderer:Renderer
 	/** The reference to the physics engine */
 	physics:Physics
+	render() {
+		for (let i in this.sprites) {
+			this.sprites[i].render();
+		}
+		for (let i in this.collections) {
+			this.collections[i].render();
+		}
+	}
+	physics_loop(){
+		for (let i in this.sprites) {
+			this.sprites[i].physics_loop();
+		}
+		for (let i in this.collections) {
+			this.collections[i].physics_loop();
+		}
+	}
 }
 /**
 * A container for sprites, often a level
