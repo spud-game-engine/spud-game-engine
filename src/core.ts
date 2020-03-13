@@ -27,11 +27,11 @@ export interface PhysicsInfo{
     */
 }
 export abstract class Physics{
-	abstract __frame(sprite:Sprite):void
+	abstract physics_loop(sprite:Sprite):void
 	/** Bind a given sprite to call [[__frame]] on the `"physics"` event */
-	attach(sprite:Sprite){
+	/*attach(sprite:Sprite){
 		sprite.physics_loop=()=>this.__frame(sprite);
-	}
+	}*/
 }
 /**
 * An in-game object
@@ -39,15 +39,20 @@ export abstract class Physics{
 export abstract class Sprite{ 
 	constructor(collection:Collection){
 		this.renderer=collection.renderer
-		collection.physics.attach(this);//TODO: make good again
+		//collection.physics.attach(this);//TODO: make good again
+		this.physics=collection.physics
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
 	renderer:Renderer
+	physics:Physics
 	render() {
 		return this.renderer.render(this);
 	}
-	physics_loop:()=>void=()=>undefined
+	//physics_loop:()=>void=()=>undefined
+	physics_loop() {
+		return this.physics.physics_loop(this)
+	}
 	//TODO: add move again
 	/*move(params:{
 		safe:boolean
