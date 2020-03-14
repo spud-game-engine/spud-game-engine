@@ -23,20 +23,26 @@ class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
 }
-/*suite("library config",()=>{
-	/*test("Constructors work",()=>{
-		assert.doesNotThrow(()=>{
-			new Game()
-		})
-	})
-})*/
-suite("Sage tests",()=>{
+suite("Renderer tests",()=>{})//All sub functions are abstract
+suite("Physics tests",()=>{})//All sub functions are abstract
+suite("Input tests",()=>{})//All sub functions are abstract
+suite("Stage tests",()=>{
 	test("constructor",()=>{
 		assert.doesNotThrow(()=>{
 			new BlandStage(
 				new BlandRenderer(),
 				new BlandPhysics(),
 				new BlandInput())
+		})
+		assert.doesNotThrow(()=>{
+			new BlandStage(
+				new BlandRenderer(),
+				new BlandPhysics(),
+				[
+					new BlandInput(),
+					new BlandInput(),
+					new BlandInput()
+				])
 		})
 	})
 })
