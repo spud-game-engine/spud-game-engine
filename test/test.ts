@@ -23,10 +23,10 @@ class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
 }
-suite("Renderer tests",()=>{})//All sub functions are abstract
-suite("Physics tests",()=>{})//All sub functions are abstract
-suite("Input tests",()=>{})//All sub functions are abstract
-suite("Stage tests",()=>{
+suite("Renderer",()=>{})//All sub functions are abstract
+suite("Physics",()=>{})//All sub functions are abstract
+suite("Input",()=>{})//All sub functions are abstract
+suite("Stage",()=>{
 	test("constructor",()=>{
 		assert.doesNotThrow(()=>{
 			new BlandStage(
@@ -46,7 +46,7 @@ suite("Stage tests",()=>{
 		})
 	})
 })
-suite("Collection tests",()=>{
+suite("Collection",()=>{
 	test("constructor",()=>{
 		assert.doesNotThrow(()=>{
 			new BlandCollection(
@@ -55,7 +55,7 @@ suite("Collection tests",()=>{
 		})
 	})
 })
-suite("Sprite tests",()=>{
+suite("Sprite",()=>{
 	test("constructor",()=>{
 		assert.doesNotThrow(()=>{
 			new BlandSprite(
@@ -63,6 +63,57 @@ suite("Sprite tests",()=>{
 					new BlandRenderer(),
 					new BlandPhysics()))
 		})
+	})
+	/** Does Sprite.render properly call Renderer.render? */
+	test("render",()=>{
+		let leftover=5
+		class CustomRenderer extends core.Renderer {
+			render() {
+				leftover--
+			}
+		}
+		let unclean=0
+		class CustomPhysics extends core.Physics {
+			physics_loop() {
+				unclean++
+			}
+		}
+		let s=new BlandSprite(
+			new BlandCollection(
+				new CustomRenderer(),
+				new CustomPhysics()))
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		assert.equal(0,leftover)
+		assert.equal(0,unclean)
+	})
+	test("physics_loop",()=>{
+		let unclean=0
+		class CustomRenderer extends core.Renderer {
+			render() {
+				unclean++
+			}
+		}
+		let leftover=5
+		class CustomPhysics extends core.Physics {
+			physics_loop() {
+				leftover--
+			}
+		}
+		let s=new BlandSprite(
+			new BlandCollection(
+				new CustomRenderer(),
+				new CustomPhysics()))
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		assert.equal(0,leftover)
+		assert.equal(0,unclean)
 	})
 })
 
