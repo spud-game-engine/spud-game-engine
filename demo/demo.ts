@@ -14,22 +14,15 @@ class MyInput extends Input {
 	}
 }
 class MyRenderer extends Renderer{
-	__frame(){}
+	render(){}
 }
 class MyPhysics extends Physics{
-	__frame(){}
+	physics_loop(){}
 }
 //They write
 /** The only player */
 class MySprite extends Sprite{
-	physicsInfo={
-		move:()=>{
-			return {
-				to:()=>this.move(),
-				by:()=>this.move()
-			};
-		}
-	}
+	physicsInfo={}
 	renderInfo={}
 }
 /** The only level */
@@ -43,11 +36,14 @@ class MyStage extends Stage {
 		})*/
 	}
 	private interval:any=-1//Type any is easiest way to work around stupid bug. Should be number or Interval
+	private interval1:any=-1
 	play() {
-		this.interval=setInterval(this.frame,1000/80);
+		this.interval=setInterval(this.render,1000/80);
+		this.interval1=setInterval(this.physics_loop,1000/80);
 	}
 	pause() {
 		clearInterval(this.interval);
+		clearInterval(this.interval1);
 	}
 }
 new MyStage().play();//We don't need the game class if there's only one stage

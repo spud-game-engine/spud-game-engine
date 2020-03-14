@@ -10,6 +10,8 @@ export interface RenderInfo{}
 export abstract class Renderer{
 	/** Render the given sprite */
 	abstract render(sprite:Sprite):void
+	/** Render the given collection */
+	abstract render(collection:Collection):void
 }
 export interface Move{
 	to(...location:number[]):Move
@@ -19,6 +21,8 @@ export interface PhysicsInfo{}
 export abstract class Physics{
 	/** Preform a physics check & update on given sprite */
 	abstract physics_loop(sprite:Sprite):void
+	/** Preform a physics check & update on given collection */
+	abstract physics_loop(collection:Collection):void
 }
 /** An in-game object */
 export abstract class Sprite{ 
@@ -79,13 +83,11 @@ export abstract class Stage extends Collection{
 	inputs:Input[]
 	/**
 	 * Play the stage
-	 *
 	 * Call inputs[].play. Also start calling this.frame regularrally
 	 */
    	abstract play():void
 	/**
 	 * Pause the stage
-	 * 
 	 * Call inputs[].pause. Also stop auto calling this.frame
 	 */
 	abstract pause():void
