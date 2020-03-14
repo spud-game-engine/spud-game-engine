@@ -10,8 +10,7 @@ class MyInput extends Input {
 			}*)
 		})*/
 	}
-	pause() {
-	}
+	pause(){}
 }
 class MyRenderer extends Renderer{
 	render(){}
