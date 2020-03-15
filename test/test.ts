@@ -54,6 +54,62 @@ suite("Collection",()=>{
 				new BlandPhysics())
 		})
 	})
+	/** Does Collection.render properly call Renderer.render? */
+	test("render renderer",()=>{
+		let leftover=5
+		class CustomRenderer extends core.Renderer {
+			render() {
+				leftover--
+			}
+		}
+		let unclean=0
+		class CustomPhysics extends core.Physics {
+			physics_loop() {
+				unclean++
+			}
+		}
+		let s=new BlandCollection(
+				new CustomRenderer(),
+				new CustomPhysics())
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		assert.equal(0,leftover)
+		assert.equal(0,unclean)
+	})
+	test("render sprites&collections",()=>{
+		assert.fail()
+	})
+	/** Does Collection.physics_loop properly call Physics.physics_loop? */
+	test("physics_loop physics",()=>{
+		let unclean=0
+		class CustomRenderer extends core.Renderer {
+			render() {
+				unclean++
+			}
+		}
+		let leftover=5
+		class CustomPhysics extends core.Physics {
+			physics_loop() {
+				leftover--
+			}
+		}
+		let s=new BlandCollection(
+				new CustomRenderer(),
+				new CustomPhysics())
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		assert.equal(0,leftover)
+		assert.equal(0,unclean)
+	})
+	test("physics_loop sprites&collections",()=>{
+		assert.fail()
+	})
 })
 suite("Sprite",()=>{
 	test("constructor",()=>{
@@ -90,6 +146,7 @@ suite("Sprite",()=>{
 		assert.equal(0,leftover)
 		assert.equal(0,unclean)
 	})
+	/** Does Sprite.physics_loop properly call Physics.physics_loop? */
 	test("physics_loop",()=>{
 		let unclean=0
 		class CustomRenderer extends core.Renderer {
