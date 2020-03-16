@@ -156,7 +156,7 @@ suite("Collection",()=>{
 		assert.equal(0,leftover)
 		assert.equal(0,unclean)
 	})
-	test("physics_loop sprites&collections",()=>{
+	test("physics_loop sprites",()=>{
 		let leftover=5*5 // 5 times called, 5 sprites
 		class CustomSprite extends core.Sprite{
 			physicsInfo={}
@@ -182,7 +182,31 @@ suite("Collection",()=>{
 		s.physics_loop()
 		assert.equal(0,leftover)
 	})
-	test("physics_loop collections",assert.fail)
+	test("physics_loop collections",()=>{
+		let leftover=5*5 // 5 times called, 5 collections
+		class CustomCollection extends core.Collection{
+			physics_loop() {
+				leftover--;
+				return super.physics_loop();//in this context, not really needed, but it is good to have
+			}
+		}
+		let s=new BlandCollection(
+				new BlandRenderer(),
+				new BlandPhysics())
+
+		for(let i=1;i < 5;i++) {
+			s.collections[i]=new CustomCollection(s.renderer,s.physics);
+		}
+
+		s.collections["Billy bob joe"]=new CustomCollection(s.renderer,s.physics);
+
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		assert.equal(0,leftover)
+	})
 })
 suite("Sprite",()=>{
 	test("constructor",()=>{
