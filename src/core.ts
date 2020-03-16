@@ -57,19 +57,23 @@ export abstract class Collection{
 	/** The reference to the physics engine */
 	physics:Physics
 	render() {
-		for (let i in this.sprites) {
-			this.sprites[i].render();
-		}
+		//Call order is most generic to least
+		this.renderer.render(this)
 		for (let i in this.collections) {
 			this.collections[i].render();
 		}
+		for (let i in this.sprites) {
+			this.sprites[i].render();
+		}
 	}
 	physics_loop(){
-		for (let i in this.sprites) {
-			this.sprites[i].physics_loop();
-		}
+		//Call order is most generic to least
+		this.physics.physics_loop(this)
 		for (let i in this.collections) {
 			this.collections[i].physics_loop();
+		}
+		for (let i in this.sprites) {
+			this.sprites[i].physics_loop();
 		}
 	}
 }

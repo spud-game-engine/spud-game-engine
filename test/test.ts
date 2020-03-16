@@ -79,9 +79,34 @@ suite("Collection",()=>{
 		assert.equal(0,leftover)
 		assert.equal(0,unclean)
 	})
-	test("render sprites&collections",()=>{
-		assert.fail()
+	test("render sprites",()=>{
+		let leftover=5*5 // 5 times called, 5 sprites
+		class CustomSprite extends core.Sprite{
+			physicsInfo={}
+			renderInfo={}
+			render() {
+				leftover--;
+				return super.render();//in this context, not really needed, but it is good to have
+			}
+		}
+		let s=new BlandCollection(
+				new BlandRenderer(),
+				new BlandPhysics())
+
+		for(let i=1;i<5;i++) {
+			s.sprites[i]=new CustomSprite(s);
+		}
+
+		s.sprites["Billy bob joe"]=new CustomSprite(s)
+
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		s.render()
+		assert.equal(0,leftover)
 	})
+	test("render collections",assert.fail)
 	/** Does Collection.physics_loop properly call Physics.physics_loop? */
 	test("physics_loop physics",()=>{
 		let unclean=0
@@ -108,8 +133,32 @@ suite("Collection",()=>{
 		assert.equal(0,unclean)
 	})
 	test("physics_loop sprites&collections",()=>{
-		assert.fail()
+		let leftover=5*5 // 5 times called, 5 sprites
+		class CustomSprite extends core.Sprite{
+			physicsInfo={}
+			renderInfo={}
+			physics_loop() {
+				leftover--;
+				return super.physics_loop();//in this context, not really needed, but it is good to have
+			}
+		}
+		let s=new BlandCollection(
+				new BlandRenderer(),
+				new BlandPhysics())
+
+		for(let i=1;i<5;i++) {
+			s.sprites[i]=new CustomSprite(s);
+		}
+		s.sprites["Billy bob joe"]=new CustomSprite(s)
+
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		s.physics_loop()
+		assert.equal(0,leftover)
 	})
+	test("physics_loop collections",assert.fail)
 })
 suite("Sprite",()=>{
 	test("constructor",()=>{
