@@ -21,8 +21,12 @@
     "set-interval-async": "^1.0.30",
     "tslib": "^1.11.1"
   },
+  "pre-commit":[
+	  "build",
+	  "test",
+  ],
   "scripts": {
-    "prepare": "yarn build",
+    "prepare_old_dont_use": "yarn build",
     "test": "nyc intern",
     "watch:test": "intern --watch",
     "watch:build": "tsc --watch",
