@@ -1,4 +1,10 @@
 //import interval from 'interval-promise'
+
+//Polyfills. According to corejs's doc, this is how Babel does their polyfills
+//From testing, it seems that `tsc` doesn't do this.
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 //TODO: Make static vs. mobile objects? - There's a built in JavaScript tool that freezes an object. This could be usefull.
 export abstract class Input{
 	/** Start listening for input */
