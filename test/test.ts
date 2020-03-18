@@ -23,6 +23,7 @@ class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
 }
+class BlandGame extends core.Game{}
 suite("Renderer",()=>{})//All sub functions are abstract
 suite("Physics",()=>{})//All sub functions are abstract
 suite("Input",()=>{})//All sub functions are abstract
@@ -131,81 +132,83 @@ suite("Collection",()=>{
 		s.render()
 		assert.equal(0,leftover)
 	})
-	/** Does Collection.physics_loop properly call Physics.physics_loop? */
-	test("physics_loop physics",()=>{
-		let unclean=0
-		class CustomRenderer extends core.Renderer {
-			render() {
-				unclean++
+	suite("physics_loop",()=>{
+		/** Does Collection.physics_loop properly call Physics.physics_loop? */
+		test("physics",()=>{
+			let unclean=0
+			class CustomRenderer extends core.Renderer {
+				render() {
+					unclean++
+				}
 			}
-		}
-		let leftover=5
-		class CustomPhysics extends core.Physics {
-			physics_loop() {
-				leftover--
+			let leftover=5
+			class CustomPhysics extends core.Physics {
+				physics_loop() {
+					leftover--
+				}
 			}
-		}
-		let s=new BlandCollection(
-				new CustomRenderer(),
-				new CustomPhysics())
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		assert.equal(0,leftover)
-		assert.equal(0,unclean)
-	})
-	test("physics_loop sprites",()=>{
-		let leftover=5*5 // 5 times called, 5 sprites
-		class CustomSprite extends core.Sprite{
-			physicsInfo={}
-			renderInfo={}
-			physics_loop() {
-				leftover--;
-				return super.physics_loop();//in this context, not really needed, but it is good to have
+			let s=new BlandCollection(
+					new CustomRenderer(),
+					new CustomPhysics())
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			assert.equal(0,leftover)
+			assert.equal(0,unclean)
+		})
+		test("sprites",()=>{
+			let leftover=5*5 // 5 times called, 5 sprites
+			class CustomSprite extends core.Sprite{
+				physicsInfo={}
+				renderInfo={}
+				physics_loop() {
+					leftover--;
+					return super.physics_loop();//in this context, not really needed, but it is good to have
+				}
 			}
-		}
-		let s=new BlandCollection(
-				new BlandRenderer(),
-				new BlandPhysics())
+			let s=new BlandCollection(
+					new BlandRenderer(),
+					new BlandPhysics())
 
-		for(let i=1;i < 5;i++) {
-			s.sprites[i]=new CustomSprite(s);
-		}
-		s.sprites["Billy bob joe"]=new CustomSprite(s)
-
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		assert.equal(0,leftover)
-	})
-	test("physics_loop collections",()=>{
-		let leftover=5*5 // 5 times called, 5 collections
-		class CustomCollection extends core.Collection{
-			physics_loop() {
-				leftover--;
-				return super.physics_loop();//in this context, not really needed, but it is good to have
+			for(let i=1;i < 5;i++) {
+				s.sprites[i]=new CustomSprite(s);
 			}
-		}
-		let s=new BlandCollection(
-				new BlandRenderer(),
-				new BlandPhysics())
+			s.sprites["Billy bob joe"]=new CustomSprite(s)
 
-		for(let i=1;i < 5;i++) {
-			s.collections[i]=new CustomCollection(s.renderer,s.physics);
-		}
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			assert.equal(0,leftover)
+		})
+		test("collections",()=>{
+			let leftover=5*5 // 5 times called, 5 collections
+			class CustomCollection extends core.Collection{
+				physics_loop() {
+					leftover--;
+					return super.physics_loop();//in this context, not really needed, but it is good to have
+				}
+			}
+			let s=new BlandCollection(
+					new BlandRenderer(),
+					new BlandPhysics())
 
-		s.collections["Billy bob joe"]=new CustomCollection(s.renderer,s.physics);
+			for(let i=1;i < 5;i++) {
+				s.collections[i]=new CustomCollection(s.renderer,s.physics);
+			}
 
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		s.physics_loop()
-		assert.equal(0,leftover)
+			s.collections["Billy bob joe"]=new CustomCollection(s.renderer,s.physics);
+
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			s.physics_loop()
+			assert.equal(0,leftover)
+		})
 	})
 })
 suite("Sprite",()=>{
@@ -268,6 +271,65 @@ suite("Sprite",()=>{
 		s.physics_loop()
 		assert.equal(0,leftover)
 		assert.equal(0,unclean)
+	})
+})
+suite("Game",()=>{
+	test("constructor",()=>{
+		assert.doesNotThrow(()=>{
+			new BlandGame();
+		})
+	})
+	suite("play & pause",()=>{
+		test("no args",()=>{
+			let leftoverPlay=5;
+			let leftoverPause=5;
+			class CustomStage extends core.Stage{
+				constructor() {
+					super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
+				}
+				play() {
+					leftoverPlay--;
+				}
+				pause() {
+					leftoverPause--;
+				}
+			}
+			let b=new BlandGame();
+			b.stages["lol"]=new CustomStage();
+			b.stageID="lol";
+			b.play();b.pause();
+			b.play();b.pause()
+			b.play();b.pause()
+			b.play();b.pause()
+			b.play();b.pause()
+			assert.equal(leftoverPlay,0,"Number of times play was triggered");
+			assert.equal(leftoverPause,0,"Number of times pause was triggered");
+		})
+		test("with args",()=>{
+			let leftoverPlay=5;
+			let leftoverPause=5;
+			class CustomStage extends core.Stage{
+				constructor() {
+					super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
+				}
+				play() {
+					leftoverPlay--;
+				}
+				pause() {
+					leftoverPause--;
+				}
+			}
+			let b=new BlandGame();
+			for(let i=0;i <5;i++){
+				b.stages[i]=new CustomStage();
+			}
+			for(let i=0;i <5;i++){
+				b.play(Math.round(Math.random()*4));
+				b.pause();
+			}
+			assert.equal(leftoverPlay,0,"Number of times play was triggered");
+			assert.equal(leftoverPause,0,"Number of times pause was triggered");
+		})
 	})
 })
 
