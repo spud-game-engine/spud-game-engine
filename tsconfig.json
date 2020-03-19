@@ -18,7 +18,7 @@
     "tslib":"^1.10.0"
 		*/
 
-		"allowUnreachableCode": false,
+		/*"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"alwaysStrict": true,
 		"noImplicitAny": true,
@@ -31,7 +31,8 @@
 		"suppressImplicitAnyIndexErrors": false,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"strictPropertyInitialization": true
+		"strictPropertyInitialization": true,*/
+		"strict":true
 	},
 	"include": [
 		"src","test/*.*","demo"
