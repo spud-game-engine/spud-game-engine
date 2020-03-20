@@ -17,7 +17,6 @@ class BlandInput extends core.Input{
 }
 class BlandCollection extends core.Collection{}
 class BlandStage extends core.Stage{
-	play(){}
 	pause(){}
 }
 class BlandSprite extends core.Sprite{
@@ -25,6 +24,7 @@ class BlandSprite extends core.Sprite{
 	renderInfo={}
 }
 class BlandGame extends core.Game{}
+
 export default function() {
 	suite("Renderer",()=>{})//All sub functions are abstract
 	suite("Physics",()=>{})//All sub functions are abstract
@@ -47,6 +47,25 @@ export default function() {
 						new BlandInput()
 					])
 			})
+		})
+		test("play",()=>{
+			let leftover=5
+			class CustomInput extends core.Input {
+				play() {
+					leftover--
+				}
+				pause() {}
+			}
+			let b=new BlandStage(
+				new BlandRenderer(),
+				new BlandPhysics(),
+				new CustomInput())
+			b.play();
+			b.play();
+			b.play();
+			b.play();
+			b.play();
+			assert.equal(leftover,0)
 		})
 	})
 	suite("Collection",()=>{
@@ -289,10 +308,14 @@ export default function() {
 				let leftoverPause=5;
 				class CustomStage extends core.Stage{
 					constructor() {
-						super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
+						super(
+							new BlandRenderer(),
+							new BlandPhysics(),
+							new BlandInput())
 					}
 					play() {
 						leftoverPlay--;
+						super.play()
 					}
 					pause() {
 						leftoverPause--;
@@ -318,6 +341,7 @@ export default function() {
 					}
 					play() {
 						leftoverPlay--;
+						super.play()
 					}
 					pause() {
 						leftoverPause--;
