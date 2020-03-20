@@ -46,7 +46,7 @@ export default function() {
 					])
 			})
 		})
-		test("play",()=>{//TODO: test that it calls play on everything that a collection would
+		test("play",()=>{
 			let leftover=5
 			class CustomInput extends core.Input {
 				play() {
