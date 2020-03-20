@@ -45,7 +45,6 @@ export abstract class Sprite{
 	physics_loop() {
 		return this.physics.physics_loop(this)
 	}
-	//TODO: add move again
 }
 /** A collection of sprites */
 export abstract class Collection{ 
@@ -92,9 +91,10 @@ export abstract class Stage extends Collection{
 	inputs:Input[]
 	/**
 	 * Play the stage
-	 * Call inputs[].play. Also start calling this.frame regularrally
 	 */
-   	abstract play():void
+   	play() {
+		this.inputs.map((v)=>v.play())
+	}
 	/**
 	 * Pause the stage
 	 * Call inputs[].pause. Also stop auto calling this.frame
