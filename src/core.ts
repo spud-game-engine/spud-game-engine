@@ -99,7 +99,9 @@ export abstract class Stage extends Collection{
 	 * Pause the stage
 	 * Call inputs[].pause. Also stop auto calling this.frame
 	 */
-	abstract pause():void
+	pause() {
+		this.inputs.map((v)=>v.pause())
+	}
 }
 /** The base class for all games */
 export abstract class Game{

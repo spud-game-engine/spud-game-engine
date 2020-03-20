@@ -16,9 +16,7 @@ class BlandInput extends core.Input{
 	pause(){}
 }
 class BlandCollection extends core.Collection{}
-class BlandStage extends core.Stage{
-	pause(){}
-}
+class BlandStage extends core.Stage{}
 class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
@@ -65,6 +63,25 @@ export default function() {
 			b.play();
 			b.play();
 			b.play();
+			assert.equal(leftover,0)
+		})
+		test("pause",()=>{
+			let leftover=5
+			class CustomInput extends core.Input {
+				play() {}
+				pause() {
+					leftover--
+				}
+			}
+			let b=new BlandStage(
+				new BlandRenderer(),
+				new BlandPhysics(),
+				new CustomInput())
+			b.pause();
+			b.pause();
+			b.pause();
+			b.pause();
+			b.pause();
 			assert.equal(leftover,0)
 		})
 	})
@@ -319,6 +336,7 @@ export default function() {
 					}
 					pause() {
 						leftoverPause--;
+						super.pause()
 					}
 				}
 				let b=new BlandGame();
@@ -345,6 +363,7 @@ export default function() {
 					}
 					pause() {
 						leftoverPause--;
+						super.pause()
 					}
 				}
 				let b=new BlandGame();
