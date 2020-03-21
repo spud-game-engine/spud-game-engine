@@ -6,7 +6,7 @@ const { assert }=intern.getPlugin('chai')
 import * as core from '../src/core'
 
 class BlandRenderer extends core.Renderer{
-	render(){}
+	render_loop(){}
 }
 class BlandPhysics extends core.Physics{
 	physics_loop(){}
@@ -94,11 +94,11 @@ export default function() {
 			})
 		})
 		/** Does Collection.render properly call Renderer.render? */
-		suite("render",()=>{
+		suite("render_loop",()=>{
 			test("renderer",()=>{
 				let leftover=5
 				class CustomRenderer extends core.Renderer {
-					render() {
+					render_loop() {
 						leftover--
 					}
 				}
@@ -111,11 +111,11 @@ export default function() {
 				let s=new BlandCollection(
 						new CustomRenderer(),
 						new CustomPhysics())
-				s.render()
-				s.render()
-				s.render()
-				s.render()
-				s.render()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
 				assert.equal(0,leftover)
 				assert.equal(0,unclean)
 			})
@@ -124,9 +124,9 @@ export default function() {
 				class CustomSprite extends core.Sprite{
 					physicsInfo={}
 					renderInfo={}
-					render() {
+					render_loop() {
 						leftover--;
-						return super.render();//in this context, not really needed, but it is good to have
+						return super.render_loop();//in this context, not really needed, but it is good to have
 					}
 				}
 				let s=new BlandCollection(
@@ -139,19 +139,19 @@ export default function() {
 
 				s.sprites["Billy bob joe"]=new CustomSprite(s)
 
-				s.render()
-				s.render()
-				s.render()
-				s.render()
-				s.render()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
 				assert.equal(0,leftover)
 			})
 			test("collections",()=>{
 				let leftover=5*5 // 5 times called, 5 collections
 				class CustomCollection extends core.Collection{
-					render() {
+					render_loop() {
 						leftover--;
-						return super.render();//in this context, not really needed, but it is good to have
+						return super.render_loop();//in this context, not really needed, but it is good to have
 					}
 				}
 				let s=new BlandCollection(
@@ -164,11 +164,11 @@ export default function() {
 
 				s.collections["Billy bob joe"]=new CustomCollection(s.renderer,s.physics);
 
-				s.render()
-				s.render()
-				s.render()
-				s.render()
-				s.render()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
+				s.render_loop()
 				assert.equal(0,leftover)
 			})
 		})
@@ -177,7 +177,7 @@ export default function() {
 			test("physics",()=>{
 				let unclean=0
 				class CustomRenderer extends core.Renderer {
-					render() {
+					render_loop() {
 						unclean++
 					}
 				}
@@ -261,10 +261,10 @@ export default function() {
 			})
 		})
 		/** Does Sprite.render properly call Renderer.render? */
-		test("render",()=>{
+		test("render_loop",()=>{
 			let leftover=5
 			class CustomRenderer extends core.Renderer {
-				render() {
+				render_loop() {
 					leftover--
 				}
 			}
@@ -278,11 +278,11 @@ export default function() {
 				new BlandCollection(
 					new CustomRenderer(),
 					new CustomPhysics()))
-			s.render()
-			s.render()
-			s.render()
-			s.render()
-			s.render()
+			s.render_loop()
+			s.render_loop()
+			s.render_loop()
+			s.render_loop()
+			s.render_loop()
 			assert.equal(0,leftover)
 			assert.equal(0,unclean)
 		})
@@ -290,7 +290,7 @@ export default function() {
 		test("physics_loop",()=>{
 			let unclean=0
 			class CustomRenderer extends core.Renderer {
-				render() {
+				render_loop() {
 					unclean++
 				}
 			}

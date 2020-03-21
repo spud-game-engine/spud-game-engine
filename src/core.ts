@@ -5,6 +5,7 @@
 //TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
 
+/** The "driver" for input. Detects when the user gives input. */
 export abstract class Input{
 	/** Start listening for input */
 	abstract play():void
@@ -12,17 +13,15 @@ export abstract class Input{
 	abstract pause():void
 }
 export interface RenderInfo{}
+/** Abstract renderer engine class */
 export abstract class Renderer{
 	/** Render the given sprite */
-	abstract render(sprite:Sprite):void
+	abstract render_loop(sprite:Sprite):void
 	/** Render the given collection */
-	abstract render(collection:Collection):void
-}
-export interface Move{
-	to(...location:number[]):Move
-	by(...location:number[]):Move
+	abstract render_loop(collection:Collection):void
 }
 export interface PhysicsInfo{}
+/** Abstract physics engine class. */
 export abstract class Physics{
 	/** Preform a physics check & update on given sprite */
 	abstract physics_loop(sprite:Sprite):void
@@ -37,16 +36,16 @@ export abstract class Sprite{
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
-	renderer:Renderer
-	physics:Physics
-	render() {
-		return this.renderer.render(this)
+	private renderer:Renderer
+	private physics:Physics
+	render_loop() {
+		return this.renderer.render_loop(this)
 	}
 	physics_loop() {
 		return this.physics.physics_loop(this)
 	}
 }
-/** A collection of sprites */
+/** A collection of [[Sprite]]s and [[Collection]]s */
 export abstract class Collection{ 
 	/** Make a new collection */
 	constructor(renderer:Renderer,physics:Physics){
@@ -60,14 +59,14 @@ export abstract class Collection{
 	renderer:Renderer
 	/** The reference to the physics engine */
 	physics:Physics
-	render() {
+	render_loop() {
 		//Call order is most generic to least
-		this.renderer.render(this)
+		this.renderer.render_loop(this)
 		for (let i in this.collections) {
-			this.collections[i].render();
+			this.collections[i].render_loop();
 		}
 		for (let i in this.sprites) {
-			this.sprites[i].render();
+			this.sprites[i].render_loop();
 		}
 	}
 	physics_loop(){
@@ -81,7 +80,7 @@ export abstract class Collection{
 		}
 	}
 }
-/** A container for sprites, often a level */
+/** A container for sprites, often used as a level */
 export abstract class Stage extends Collection{
 	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
 		super(renderer,physics)
@@ -102,7 +101,10 @@ export abstract class Stage extends Collection{
 		this.inputs.map((v)=>v.pause())
 	}
 }
-/** The base class for all games */
+/**
+ * The base class for all games that have need for more than one
+ * stage
+ */
 export abstract class Game{
 	/** The current stage */
 	stageID:number|string=-1;

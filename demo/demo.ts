@@ -13,7 +13,7 @@ class MyInput extends Input {
 	pause(){}
 }
 class MyRenderer extends Renderer{
-	render(){}
+	render_loop(){}
 }
 class MyPhysics extends Physics{
 	physics_loop(){}
@@ -37,7 +37,7 @@ class MyStage extends Stage {
 	private interval:any=-1//Type any is easiest way to work around stupid bug. Should be number or Interval
 	private interval1:any=-1
 	play() {
-		this.interval=setInterval(this.render,1000/80);
+		this.interval=setInterval(this.render_loop,1000/80);
 		this.interval1=setInterval(this.physics_loop,1000/80);
 	}
 	pause() {
