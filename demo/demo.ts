@@ -1,4 +1,4 @@
-import{Stage,Input,Sprite,Renderer,Physics}from"../src/core"
+import{Game,Stage,Input,Sprite,Renderer,Physics}from"../src/core"
 
 //Would be imported too
 class MyInput extends Input {
@@ -45,5 +45,12 @@ class MyStage extends Stage {
 		clearInterval(this.interval1);
 	}
 }
-new MyStage().play();//We don't need the game class if there's only one stage
+//new MyStage().play();//We don't need the game class if there's only one stage
+class MyGame extends Game {
+	constructor() {
+		super()
+		this.stages.stageOne=new MyStage()
+	}
+}
+new MyGame().play();
 
