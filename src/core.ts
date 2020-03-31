@@ -36,8 +36,8 @@ export abstract class Sprite{
 	}
 	abstract renderInfo:RenderInfo
 	abstract physicsInfo:PhysicsInfo
-	private renderer:Renderer
-	private physics:Physics
+	renderer:Renderer
+	physics:Physics
 	render_loop() {
 		return this.renderer.render_loop(this)
 	}
@@ -59,7 +59,7 @@ export abstract class Collection{
 	renderer:Renderer
 	/** The reference to the physics engine */
 	physics:Physics
-	render_loop() {
+	render_loop() {//TODO: inverse order and use promises
 		//Call order is most generic to least
 		this.renderer.render_loop(this)
 		for (let i in this.collections) {
@@ -69,7 +69,7 @@ export abstract class Collection{
 			this.sprites[i].render_loop();
 		}
 	}
-	physics_loop(){
+	physics_loop(){//TODO: inverse order and use promises
 		//Call order is most generic to least
 		this.physics.physics_loop(this)
 		for (let i in this.collections) {
@@ -104,23 +104,31 @@ export abstract class Stage extends Collection{
 /**
  * The base class for all games that have need for more than one
  * stage
+ * 
+ * In charge of holding [[Stage]] instances, and making sure that only one is
+ * playing at a time.
  */
 export abstract class Game{
 	/** The current stage */
 	stageID:number|string=-1;
 	/** All stages */
 	stages:{[index:string]:Stage}={};
+	/** Is a stage currently running? */
+	private playing:boolean=false
 	/**
 	 * Play the game
 	 * @param id If supplied, sets [[stageID]]
 	 */
 	play(id?:number|string) {
+		if(this.playing) this.pause();
 		if (typeof id!="undefined") this.stageID=id;
 		this.stages[this.stageID].play()
+		this.playing=true
 	}
 	/** Pause the game */
 	pause() {
 		this.stages[this.stageID].pause()
+		this.playing=false
 	}
 }
 

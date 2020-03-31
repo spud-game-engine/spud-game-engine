@@ -377,6 +377,30 @@ export default function() {
 				assert.equal(leftoverPlay,0,"Number of times play was triggered");
 				assert.equal(leftoverPause,0,"Number of times pause was triggered");
 			})
+			test("auto pauses",()=>{
+				let playing=false;
+				class CustomStage extends core.Stage{
+					constructor(){
+						super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
+					}
+					play() {
+						super.play()
+						playing=true;
+					}
+					pause() {
+						super.pause()
+						playing=false;
+					}
+				}
+				assert.isFalse(playing)
+				let g=new BlandGame();
+				g.stages["first"]=new CustomStage()
+				g.stages["next"]=new BlandStage(new BlandRenderer(),new BlandPhysics(),new BlandInput())
+				g.play("first")
+				assert.isTrue(playing)
+				g.play("next")
+				assert.isFalse(playing)
+			})
 		})
 	})
 }
