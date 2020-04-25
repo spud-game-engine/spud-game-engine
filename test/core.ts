@@ -84,6 +84,10 @@ export default function() {
 			b.pause();
 			assert.equal(leftover,0)
 		})
+		/** Test to see if instances of [[core.Input]] can effect other things */
+		test("input events",()=>{
+			assert.fail("look into promise-based or observeable-based subscriptions instead.")
+		})
 	})
 	suite("Collection",()=>{
 		test("constructor",()=>{
@@ -171,6 +175,7 @@ export default function() {
 				s.render_loop()
 				assert.equal(0,leftover)
 			})
+			test("call order",()=>assert.fail("Test not written yet..."))
 		})
 		/** Does Collection.physics_loop properly call Physics.physics_loop? */
 		suite("physics_loop",()=>{

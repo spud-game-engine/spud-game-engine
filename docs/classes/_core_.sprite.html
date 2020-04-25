@@ -74,6 +74,16 @@
 					<div class="lead">
 						<p>An in-game object</p>
 					</div>
+					<p>In charge of these things:</p>
+					<ul>
+						<li>Tell the <a href="_core_.renderer.html">Renderer</a> and <a href="_core_.physics.html">Physics</a> to update itself. TODO:verify</li>
+						<li>Store information unique to physics (such as the hitbox) in
+						<a href="../interfaces/_core_.physicsinfo.html">PhysicsInfo</a> TODO:verify</li>
+						<li>Store information unique to rendering (such as image resource) in
+						<a href="../interfaces/_core_.renderinfo.html">RenderInfo</a> TODO:verify</li>
+						<li>Directly store information shared between both <a href="_core_.physics.html">Physics</a> and
+						<a href="_core_.renderer.html">Renderer</a> (such as location) TODO:verify</li>
+					</ul>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,10 +107,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.sprite.html#physics" class="tsd-kind-icon">physics</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#physics" class="tsd-kind-icon">physics</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#physicsinfo" class="tsd-kind-icon">physics<wbr>Info</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#renderinfo" class="tsd-kind-icon">render<wbr>Info</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.sprite.html#renderer" class="tsd-kind-icon">renderer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#renderer" class="tsd-kind-icon">renderer</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -125,7 +135,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L32">core.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L66">core.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -141,13 +151,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="physics" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> physics</h3>
+					<h3>physics</h3>
 					<div class="tsd-signature tsd-kind-icon">physics<span class="tsd-signature-symbol">:</span> <a href="_core_.physics.html" class="tsd-signature-type">Physics</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L40">core.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L74">core.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">physics<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_.physicsinfo.html" class="tsd-signature-type">PhysicsInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L38">core.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L72">core.ts:72</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -167,17 +177,17 @@
 					<div class="tsd-signature tsd-kind-icon">render<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_.renderinfo.html" class="tsd-signature-type">RenderInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L37">core.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L71">core.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="renderer" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> renderer</h3>
+					<h3>renderer</h3>
 					<div class="tsd-signature tsd-kind-icon">renderer<span class="tsd-signature-symbol">:</span> <a href="_core_.renderer.html" class="tsd-signature-type">Renderer</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L39">core.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L73">core.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +204,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L44">core.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L78">core.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -211,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L41">core.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L75">core.ts:75</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -228,6 +238,9 @@
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_core_.html">&quot;core&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_platformer_.html">&quot;platformer&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -256,7 +269,7 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_core_.sprite.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_core_.sprite.html#physics" class="tsd-kind-icon">physics</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -265,7 +278,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_core_.sprite.html#renderinfo" class="tsd-kind-icon">render<wbr>Info</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_core_.sprite.html#renderer" class="tsd-kind-icon">renderer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">

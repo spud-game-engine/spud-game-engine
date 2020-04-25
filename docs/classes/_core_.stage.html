@@ -74,6 +74,14 @@
 					<div class="lead">
 						<p>A container for sprites, often used as a level</p>
 					</div>
+					<p>In charge of these things:</p>
+					<ul>
+						<li>Tell the inputs when to play or pause.</li>
+						<li>Allow for input events to trigger changes in the contained sprites and
+						constructors inherited from <a href="_core_.collection.html">Collection</a> TODO:verify</li>
+						<li>Tell the <a href="_core_.renderer.html">Renderer</a> when to render.</li>
+						<li>Tell the <a href="_core_.physics.html">Physics</a> when to update.</li>
+					</ul>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -84,6 +92,14 @@
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">Stage</span>
+								<ul class="tsd-hierarchy">
+									<li>
+										<a href="_platformer_.sprite.html" class="tsd-signature-type">Sprite</a>
+									</li>
+									<li>
+										<a href="_platformer_.stage.html" class="tsd-signature-type">Stage</a>
+									</li>
+								</ul>
 							</li>
 						</ul>
 					</li>
@@ -134,7 +150,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L84">core.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L141">core.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -163,7 +179,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#collections">collections</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L57">core.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L104">core.ts:104</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -181,7 +197,7 @@
 					<div class="tsd-signature tsd-kind-icon">inputs<span class="tsd-signature-symbol">:</span> <a href="_core_.input.html" class="tsd-signature-type">Input</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L90">core.ts:90</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L147">core.ts:147</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +208,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#physics">physics</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L61">core.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L108">core.ts:108</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -208,7 +224,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#renderer">renderer</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L59">core.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L106">core.ts:106</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -224,7 +240,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#sprites">sprites</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L56">core.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L103">core.ts:103</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -254,7 +270,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L100">core.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L157">core.ts:157</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -277,7 +293,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#physics_loop">physics_loop</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L72">core.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L119">core.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -294,7 +310,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L94">core.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L151">core.ts:151</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -317,7 +333,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.collection.html">Collection</a>.<a href="_core_.collection.html#render_loop">render_loop</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/2f8c318/src/core.ts#L62">core.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L109">core.ts:109</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -334,6 +350,9 @@
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_core_.html">&quot;core&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_platformer_.html">&quot;platformer&quot;</a>
 					</li>
 				</ul>
 			</nav>

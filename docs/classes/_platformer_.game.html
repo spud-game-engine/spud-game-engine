@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_core_.html">&quot;core&quot;</a>
+					<a href="../modules/_platformer_.html">&quot;platformer&quot;</a>
 				</li>
 				<li>
-					<a href="_core_.game.html">Game</a>
+					<a href="_platformer_.game.html">Game</a>
 				</li>
 			</ul>
 			<h1>Class Game</h1>
@@ -69,24 +69,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>The base class for all games that have need for more than one
-						stage</p>
-					</div>
-					<p>In charge of holding <a href="_core_.stage.html">Stage</a> instances, and making sure that only one is
-					playing at a time.</p>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Game</span>
+						<a href="_core_.game.html" class="tsd-signature-type">Game</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<a href="_platformer_.game.html" class="tsd-signature-type">Game</a>
+								<span class="target">Game</span>
 							</li>
 						</ul>
 					</li>
@@ -96,46 +86,31 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#playing" class="tsd-kind-icon">playing</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.game.html#stageid" class="tsd-kind-icon">stageID</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.game.html#stages" class="tsd-kind-icon">stages</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_platformer_.game.html#stageid" class="tsd-kind-icon">stageID</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_platformer_.game.html#stages" class="tsd-kind-icon">stages</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.game.html#pause" class="tsd-kind-icon">pause</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.game.html#play" class="tsd-kind-icon">play</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_platformer_.game.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_platformer_.game.html#play" class="tsd-kind-icon">play</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="playing" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> playing</h3>
-					<div class="tsd-signature tsd-kind-icon">playing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L174">core.ts:174</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Is a stage currently running?</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="stageid" class="tsd-anchor"></a>
 					<h3>stageID</h3>
 					<div class="tsd-signature tsd-kind-icon">stageID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;-1</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#stageid">stageID</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L170">core.ts:170</a></li>
 						</ul>
@@ -146,11 +121,12 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="stages" class="tsd-anchor"></a>
 					<h3>stages</h3>
 					<div class="tsd-signature tsd-kind-icon">stages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#stages">stages</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L172">core.ts:172</a></li>
 						</ul>
@@ -170,17 +146,18 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="pause" class="tsd-anchor"></a>
 					<h3>pause</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#pause">pause</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L186">core.ts:186</a></li>
 								</ul>
@@ -194,15 +171,16 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="play" class="tsd-anchor"></a>
 					<h3>play</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">play<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#play">play</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0b6d045/src/core.ts#L179">core.ts:179</a></li>
 								</ul>
@@ -217,7 +195,7 @@
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> id: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>If supplied, sets <a href="_core_.game.html#stageid">stageID</a></p>
+										<p>If supplied, sets <a href="_platformer_.game.html#stageid">stageID</a></p>
 									</div>
 								</li>
 							</ul>
@@ -233,10 +211,10 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_core_.html">&quot;core&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_platformer_.html">&quot;platformer&quot;</a>
 					</li>
 				</ul>
@@ -244,52 +222,49 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.collection.html" class="tsd-kind-icon">Collection</a>
+						<a href="_platformer_.collection.html" class="tsd-kind-icon">Collection</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.game.html" class="tsd-kind-icon">Game</a>
+						<a href="_platformer_.game.html" class="tsd-kind-icon">Game</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_core_.game.html#playing" class="tsd-kind-icon">playing</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_platformer_.game.html#stageid" class="tsd-kind-icon">stageID</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.game.html#stageid" class="tsd-kind-icon">stageID</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_platformer_.game.html#stages" class="tsd-kind-icon">stages</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.game.html#stages" class="tsd-kind-icon">stages</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_platformer_.game.html#pause" class="tsd-kind-icon">pause</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_core_.game.html#pause" class="tsd-kind-icon">pause</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_core_.game.html#play" class="tsd-kind-icon">play</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_platformer_.game.html#play" class="tsd-kind-icon">play</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.input.html" class="tsd-kind-icon">Input</a>
+						<a href="_platformer_.input.html" class="tsd-kind-icon">Input</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.physics.html" class="tsd-kind-icon">Physics</a>
+						<a href="_platformer_.physics.html" class="tsd-kind-icon">Physics</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.renderer.html" class="tsd-kind-icon">Renderer</a>
+						<a href="_platformer_.renderer.html" class="tsd-kind-icon">Renderer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.sprite.html" class="tsd-kind-icon">Sprite</a>
+						<a href="_platformer_.sprite.html" class="tsd-kind-icon">Sprite</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.stage.html" class="tsd-kind-icon">Stage</a>
+						<a href="_platformer_.stage.html" class="tsd-kind-icon">Stage</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_core_.physicsinfo.html" class="tsd-kind-icon">Physics<wbr>Info</a>
+						<a href="../interfaces/_platformer_.physicsinfo.html" class="tsd-kind-icon">Physics<wbr>Info</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_core_.renderinfo.html" class="tsd-kind-icon">Render<wbr>Info</a>
+						<a href="../interfaces/_platformer_.renderinfo.html" class="tsd-kind-icon">Render<wbr>Info</a>
 					</li>
 				</ul>
 			</nav>
