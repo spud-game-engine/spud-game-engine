@@ -48,53 +48,98 @@ export default function() {
 		})
 		test("play",()=>{
 			let leftover=5
-			class CustomInput extends core.Input {
-				play() {
-					leftover--
+			class CustomCollection extends core.Collection {
+				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
+					super(renderer,physics,parentCollection)
+					this.playing=parentCollection.playing
+					this.playing.subscribe({
+						next(val:boolean){
+							if(val) leftover--;
+						}
+					})
 				}
-				pause() {}
 			}
-			let b=new BlandStage(
+			class CustomStage extends core.Stage {
+				constructor(renderer:core.Renderer,physics:core.Physics,input:core.Input){
+					super(renderer,physics,input)
+					this.collections[0]=new CustomCollection(renderer,physics,this)
+				}
+			}
+			let c=new CustomStage(
 				new BlandRenderer(),
 				new BlandPhysics(),
-				new CustomInput())
-			b.play();
-			b.play();
-			b.play();
-			b.play();
-			b.play();
+				new BlandInput());
+			c.play();
+			c.play(true);
+			c.pause(false);
+			c.play()
+				.play();
 			assert.equal(leftover,0)
 		})
-		test("pause",()=>{
+		test("play",()=>{
 			let leftover=5
-			class CustomInput extends core.Input {
-				play() {}
-				pause() {
-					leftover--
+			class CustomCollection extends core.Collection {
+				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
+					super(renderer,physics,parentCollection)
+					this.playing=parentCollection.playing
+					this.playing.subscribe({
+						next(val:boolean){
+							if(!val) leftover--;
+						}
+					})
 				}
 			}
-			let b=new BlandStage(
+			class CustomStage extends core.Stage {
+				constructor(renderer:core.Renderer,physics:core.Physics,input:core.Input){
+					super(renderer,physics,input)
+					this.collections[0]=new CustomCollection(renderer,physics,this)
+				}
+			}
+			let c=new CustomStage(
 				new BlandRenderer(),
 				new BlandPhysics(),
-				new CustomInput())
-			b.pause();
-			b.pause();
-			b.pause();
-			b.pause();
-			b.pause();
+				new BlandInput());
+			c.pause();
+			c.pause(true);
+			c.play(false);
+			c.pause()
+				.pause();
 			assert.equal(leftover,0)
 		})
 		/** Test to see if instances of [[core.Input]] can effect other things */
 		test("input events",()=>{
-			assert.fail("look into promise-based or observeable-based subscriptions instead.")
+			assert.fail("Test not written yet")
 		})
 	})
 	suite("Collection",()=>{
-		test("constructor",()=>{
-			assert.doesNotThrow(()=>{
-				new BlandCollection(
-					new BlandRenderer(),
-					new BlandPhysics())
+		sute("constructor",()=>{
+			test("normal",()=>{
+				assert.doesNotThrow(()=>{
+					new BlandCollection(
+						new BlandRenderer(),
+						new BlandPhysics())
+				})
+			})
+			test("array of renderers",()=>{
+				assert.doesNotThrow(()=>{
+					new BlandCollection(
+						[
+							new BlandRenderer(),
+							new BlandRenderer()
+						],
+						new BlandPhysics())
+				})
+			})
+			test("array of physics",()=>{
+				assert.doesNotThrow(()=>{
+					new BlandCollection(
+						new BlandRenderer(),
+						[
+							new BlandPhysics(),
+							new BlandPhysics()
+						]
+					)
+				})
 			})
 		})
 		/** Does Collection.render properly call Renderer.render? */
@@ -102,26 +147,23 @@ export default function() {
 			test("renderer",()=>{
 				let leftover=5
 				class CustomRenderer extends core.Renderer {
-					render_loop() {
-						leftover--
+					attach(collection:core.Collection){
+						collection.playing.subscribe({
+							"next":(val:boolean)=>{
+								if(val)leftover--;
+							}
+						})
 					}
 				}
-				let unclean=0
-				class CustomPhysics extends core.Physics {
-					physics_loop() {
-						unclean++
-					}
-				}
-				let s=new BlandCollection(
-						new CustomRenderer(),
-						new CustomPhysics())
-				s.render_loop()
-				s.render_loop()
-				s.render_loop()
-				s.render_loop()
-				s.render_loop()
+				let s=new CustomCollection(
+					new CustomRenderer(),
+					new BlandPhysics())
+				s.play()
+				s.play()
+				s.play()
+				s.play()
+				s.play()
 				assert.equal(0,leftover)
-				assert.equal(0,unclean)
 			})
 			test("sprites",()=>{
 				let leftover=5*5 // 5 times called, 5 sprites
@@ -179,6 +221,7 @@ export default function() {
 		})
 		/** Does Collection.physics_loop properly call Physics.physics_loop? */
 		suite("physics_loop",()=>{
+			assert.fail("Needs conversion to subscriptions")
 			test("physics",()=>{
 				let unclean=0
 				class CustomRenderer extends core.Renderer {
@@ -267,6 +310,7 @@ export default function() {
 		})
 		/** Does Sprite.render properly call Renderer.render? */
 		test("render_loop",()=>{
+			assert.fail("Needs conversion to subscriptions")
 			let leftover=5
 			class CustomRenderer extends core.Renderer {
 				render_loop() {
@@ -293,6 +337,7 @@ export default function() {
 		})
 		/** Does Sprite.physics_loop properly call Physics.physics_loop? */
 		test("physics_loop",()=>{
+			assert.fail("Needs conversion to subscriptions")
 			let unclean=0
 			class CustomRenderer extends core.Renderer {
 				render_loop() {
@@ -325,6 +370,7 @@ export default function() {
 			})
 		})
 		suite("play & pause",()=>{
+			assert.fail("Needs conversion to subscriptions")
 			test("no args",()=>{
 				let leftoverPlay=5;
 				let leftoverPause=5;
