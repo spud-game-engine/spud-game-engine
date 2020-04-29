@@ -24,7 +24,7 @@ class BlandSprite extends core.Sprite{
 class BlandGame extends core.Game{}
 
 export default function() {
-	suite("Renderer",()=>{})//All sub functions are abstract
+	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
 	suite("Physics",()=>{})//All sub functions are abstract
 	suite("Input",()=>{})//All sub functions are abstract
 	suite("Stage",()=>{
@@ -43,7 +43,55 @@ export default function() {
 						new BlandInput(),
 						new BlandInput(),
 						new BlandInput()
-					])
+					]
+				)
+			})
+		})
+		suite("subclass",()=>{
+			suite("smallest possible",()=>{
+				test("done right",()=>{
+					class CustomCollection extends core.Collection{
+						constructor() {
+							super(new BlandRenderer(),new BlandPhysics())
+							this.playing=new Observable(()=>{}) // Required
+						}
+					}
+					assert.doesNotThrow(()=>{
+						new CustomCollection()
+					})
+				})
+				test("smallest without playing Observable",()=>{
+					//It's possible that this might not even compile. If that's the case, then this test is useless
+					assert.throws(()=>{
+						class CustomCollection extends core.Collection{
+							constructor() {
+								super(new BlandRenderer(),new BlandPhysics())
+							}
+						}
+						new CustomCollection()
+					})
+				})
+			})
+			suite("with parentCollection",()=>{
+				test("done right",()=>{
+					class CustomCollection extends core.Collection{
+						constructor() {
+							super(new BlandRenderer(),new BlandPhysics(),new BlandCollection(new BlandRenderer(),new BlandPhysics()))
+							this.playing=new Observable(()=>{}) // Required
+						}
+					}
+				})
+				test("smallest without playing Observable",()=>{
+					//It's possible that this might not even compile. If that's the case, then this test is useless
+					assert.throws(()=>{
+						class CustomCollection extends core.Collection{
+							constructor() {
+								super(new BlandRenderer(),new BlandPhysics(),new BlandCollection(new BlandRenderer(),new BlandPhysics()))
+							}
+						}
+						new CustomCollection()
+					})
+				})
 			})
 		})
 		test("play",()=>{
@@ -72,16 +120,16 @@ export default function() {
 			c.play();
 			c.play(true);
 			c.pause(false);
-			c.play()
+			c.play() //TODO: do we _really_ want to be able to do this?
 				.play();
 			assert.equal(leftover,0)
 		})
-		test("play",()=>{
+		test("pause",()=>{
 			let leftover=5
 			class CustomCollection extends core.Collection {
 				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
 					super(renderer,physics,parentCollection)
-					this.playing=parentCollection.playing
+					this.playing=parentCollection.playing //This is required
 					this.playing.subscribe({
 						next(val:boolean){
 							if(!val) leftover--;
@@ -108,11 +156,25 @@ export default function() {
 		})
 		/** Test to see if instances of [[core.Input]] can effect other things */
 		test("input events",()=>{
-			assert.fail("Test not written yet")
+			assert.fail("Test not written yet")//TODO: write test
+		})
+		test("render events",()=>{
+			assert.fail("Test not written yet")//TODO: write test
+		})
+		test("physics events",()=>{
+			assert.fail("Test not written yet")//TODO: write test
 		})
 	})
 	suite("Collection",()=>{
-		sute("constructor",()=>{
+		suite("constructor",()=>{
+			test("acting as child",()=>{
+				assert.doesNotThrow(()=>{
+					new BlandCollection(
+						new BlandCollection(
+							new BlandRenderer(),
+							new BlandPhysics()))
+				}
+			})
 			test("normal",()=>{
 				assert.doesNotThrow(()=>{
 					new BlandCollection(
@@ -141,6 +203,27 @@ export default function() {
 					)
 				})
 			})
+			test("array of physics and renders",()=>{
+				assert.doesNotThrow(()=>{
+					new BlandCollection(
+						[
+							new BlandRenderer(),
+							new BlandRenderer()
+						],
+						[
+							new BlandPhysics(),
+							new BlandPhysics()
+						]
+					)
+				})
+			})
+		})
+		suite("subclass",()=>{
+			test("with child collection",()=>{
+				class CustomCollection extends core.Collection {
+					constructor() {
+						super(new BlandRenderer(),new BlandPhysics())
+						this.collections[0]=new BlandCollection(this)
 		})
 		/** Does Collection.render properly call Renderer.render? */
 		suite("render_loop",()=>{
@@ -155,7 +238,7 @@ export default function() {
 						})
 					}
 				}
-				let s=new CustomCollection(
+				let s=new BlandCollection(
 					new CustomRenderer(),
 					new BlandPhysics())
 				s.play()
