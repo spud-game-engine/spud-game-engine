@@ -3,7 +3,10 @@
 //import { Task, Evented, request } from '@theintern/common'
 const {suite, test}=intern.getPlugin("interface.tdd")
 const { assert }=intern.getPlugin('chai')
+import { Subject } from 'rxjs';
 import * as core from '../src/core'
+
+//TODO: Inputs must have a subject of type `Subject<[string,Observeable<InputInfo>]>` or something like that where the passed observable completes at the end of the input event
 
 class BlandRenderer extends core.Renderer{
 	render_loop(){}
@@ -28,6 +31,7 @@ export default function() {
 	suite("Physics",()=>{})//All sub functions are abstract
 	suite("Input",()=>{})//All sub functions are abstract
 	suite("Stage",()=>{
+		return;//TODO: stage class is probabbly useless
 		test("constructor",()=>{
 			assert.doesNotThrow(()=>{
 				new BlandStage(
@@ -53,14 +57,14 @@ export default function() {
 					class CustomCollection extends core.Collection{
 						constructor() {
 							super(new BlandRenderer(),new BlandPhysics())
-							this.playing=new Observable(()=>{}) // Required
+							this.playing=new Subject(()=>{}) // Required
 						}
 					}
 					assert.doesNotThrow(()=>{
 						new CustomCollection()
 					})
 				})
-				test("smallest without playing Observable",()=>{
+				test("smallest without playing Subject",()=>{
 					//It's possible that this might not even compile. If that's the case, then this test is useless
 					assert.throws(()=>{
 						class CustomCollection extends core.Collection{
@@ -77,11 +81,11 @@ export default function() {
 					class CustomCollection extends core.Collection{
 						constructor() {
 							super(new BlandRenderer(),new BlandPhysics(),new BlandCollection(new BlandRenderer(),new BlandPhysics()))
-							this.playing=new Observable(()=>{}) // Required
+							this.playing=new Subject(()=>{}) // Required
 						}
 					}
 				})
-				test("smallest without playing Observable",()=>{
+				test("smallest without playing Subject",()=>{
 					//It's possible that this might not even compile. If that's the case, then this test is useless
 					assert.throws(()=>{
 						class CustomCollection extends core.Collection{
@@ -100,10 +104,8 @@ export default function() {
 				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
 					super(renderer,physics,parentCollection)
 					this.playing=parentCollection.playing
-					this.playing.subscribe({
-						next(val:boolean){
-							if(val) leftover--;
-						}
+					this.playing.subscribe((val:boolean)=>{
+						if(val) leftover--;
 					})
 				}
 			}
@@ -130,10 +132,8 @@ export default function() {
 				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
 					super(renderer,physics,parentCollection)
 					this.playing=parentCollection.playing //This is required
-					this.playing.subscribe({
-						next(val:boolean){
-							if(!val) leftover--;
-						}
+					this.playing.subscribe((val:boolean)=>{
+						if(!val) leftover--;
 					})
 				}
 			}
@@ -155,8 +155,68 @@ export default function() {
 			assert.equal(leftover,0)
 		})
 		/** Test to see if instances of [[core.Input]] can effect other things */
-		test("input events",()=>{
-			assert.fail("Test not written yet")//TODO: write test
+		suite("input events",()=>{
+			class CustomInput extends core.Input {
+				attach(collection:core.Collection) {
+					super.attach(collection) //TODO: throws if called twice
+					collection.playing.subscribe((val:boolean)=>{
+						if (val) {
+							for(let i=0;i <5;i++) {
+								this.trigger({ // TODO: verify This is the exact object received in the start subscription
+									type:"",
+									device:"",
+									startTime:new Date(),
+									code:0,
+									value:1
+								})
+							}
+						}
+					})
+				}
+			}
+			test("effects stage",()=>{
+				let leftover=5
+				class CustomStage extends core.Stage {
+					constructor() {
+						super(
+							new BlandRenderer(),
+							new BlandPhysics(),
+							new CustomInput())
+						this.inputs[0].start.subscribe((val:core.InputInfo)=>{
+							leftover--
+						})
+					}
+				}
+				new CustomStage().play()
+				assert.equal(leftover,0)
+			})
+			test("effects bound sprites",()=>{
+				assert.fail("Test not written yet")//TODO: write test
+				let leftover=5
+				class CustomSprite extends core.Sprite{
+					constructor(collection:core.Collection){
+						super(collection)
+						collection.inputs.map()// TODO: perhaps we don't need the stage class then....
+					}
+				}
+				class CustomStage extends core.Stage {
+					constructor() {
+						super(
+							new BlandRenderer(),
+							new BlandPhysics(),
+							new CustomInput())
+						this.sprites[0]=new CustomSprite(this)
+						this.inputs[0].start.subscribe((val:core.InputInfo)=>{
+							leftover--
+						})
+					}
+				}
+				new CustomStage().play()
+				assert.equal(leftover,0)
+			})
+			test("effects bound collections",()=>{
+				assert.fail("Test not written yet")//TODO: write test
+			})
 		})
 		test("render events",()=>{
 			assert.fail("Test not written yet")//TODO: write test
@@ -173,7 +233,7 @@ export default function() {
 						new BlandCollection(
 							new BlandRenderer(),
 							new BlandPhysics()))
-				}
+				})
 			})
 			test("normal",()=>{
 				assert.doesNotThrow(()=>{
@@ -224,17 +284,17 @@ export default function() {
 					constructor() {
 						super(new BlandRenderer(),new BlandPhysics())
 						this.collections[0]=new BlandCollection(this)
+					}
+				}
+			})
 		})
-		/** Does Collection.render properly call Renderer.render? */
 		suite("render_loop",()=>{
 			test("renderer",()=>{
 				let leftover=5
 				class CustomRenderer extends core.Renderer {
 					attach(collection:core.Collection){
-						collection.playing.subscribe({
-							"next":(val:boolean)=>{
-								if(val)leftover--;
-							}
+						collection.playing.subscribe((val:boolean)=>{
+							if(val)leftover--;
 						})
 					}
 				}
@@ -251,12 +311,16 @@ export default function() {
 			test("sprites",()=>{
 				let leftover=5*5 // 5 times called, 5 sprites
 				class CustomSprite extends core.Sprite{
-					physicsInfo={}
+					constructor(collection:core.Collection){
+						super(collection)
+						collection.render_loop.subscribe(()=>this)//Give the renderer back a reference to this object
+					}
+					/*physicsInfo={}
 					renderInfo={}
 					render_loop() {
 						leftover--;
 						return super.render_loop();//in this context, not really needed, but it is good to have
-					}
+					}*/
 				}
 				let s=new BlandCollection(
 						new BlandRenderer(),
