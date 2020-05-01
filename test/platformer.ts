@@ -1,4 +1,4 @@
-/* istanbul ignore file */
+/* istanbul ignore file *
 /// <reference types="intern"/>
 const{suite,test}=intern.getPlugin("interface.tdd")
 const{assert}=intern.getPlugin("chai")
@@ -62,5 +62,5 @@ export default function() {
 	suite("Collection",()=>{})
 	suite("Sprite",()=>{})
 	suite("Game",()=>{})
-}
+}*/
 

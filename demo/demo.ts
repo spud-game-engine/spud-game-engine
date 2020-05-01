@@ -1,3 +1,4 @@
+/* TODO: this isn't an alternative to unit testing. do unit testing instead
 import{Input,Sprite,Renderer,Physics}from"../src/core"
 
 //Would be imported too
@@ -8,7 +9,7 @@ class MyInput extends Input {
 			this.trigger("inputDown",ev/*{
 				source:"keyboard"
 			}*)
-		})*/
+		})*
 	}
 	pause(){}
 }
@@ -19,7 +20,7 @@ class MyPhysics extends Physics{
 	physics_loop(){}
 }
 //They write
-/** The only player */
+/** The only player *
 class MySprite extends Sprite{
 	physicsInfo={}
 	renderInfo={}

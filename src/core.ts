@@ -6,6 +6,7 @@
 //TODO: import 'regenerator-runtime/runtime';
 import { Subject } from 'rxjs';
 
+export type Playing=Subject<boolean>
 /**
  * The "driver" for input. Detects when the user gives input.
  *
@@ -36,7 +37,8 @@ export abstract class Renderer{
 	/** Render the given collection */
 	//abstract render_loop(collection:Collection):void
 	/** Tell the renderer to listen for events on this collection */
-	abstract attach(collection:Collection):void
+	//TODO: write docstring
+	abstract render_loop:Subject<RendererActor>
 }
 /** Where Physics-specific information about a specific sprite is stored */
 export interface PhysicsInfo{}
@@ -58,7 +60,8 @@ export abstract class Physics{
 	//abstract physics_loop(sprite:Sprite):void
 	/** Preform a physics check & update on given collection */
 	//abstract physics_loop(collection:Collection):void
-	abstract attach(collection:Collection):void
+	//TODO: write docstring
+	abstract physics_loop:Subject<PhysicsActor>
 }
 /**
  * An in-game object
@@ -75,9 +78,6 @@ export abstract class Physics{
  */
 export abstract class Sprite{ 
 	constructor(collection:Collection){
-		if (typeof collection.renderer=="undefined"||
-			typeof collection.physics =="undefined")
-				throw new Error("renderer and physics is required!")//TODO: re-evalute later
 		this.renderer=collection.renderer
 		this.physics=collection.physics
 	}
@@ -109,29 +109,18 @@ export abstract class Sprite{
  * or indirectly mannages have been updated. TODO:verify
  */
 export abstract class Collection{ 
-	/** Make a new collection *///TODO: re-evaluate arguments
-	constructor(collection?:Collection){
-		if(typeof collection!=="undefined"){
-			this.renderer=collection.renderer
-			this.physics=collection.physics
-		}
-	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
 	collections:{[index:string]:Collection}={}
 
-	//TODO: write docstring
-	abstract render_loop:Subject<RendererActor>
 	/** The reference to the renderer engine */
-	renderer?:Renderer
+	abstract renderer:Renderer
 
-	//TODO: write docstring
-	abstract physics_loop:Subject<PhysicsActor>
 	/** The reference to the physics engine */
-	physics?:Physics
+	abstract physics:Physics
 
 	//TODO: write docstring
-	abstract playing:Subject<boolean>
+	abstract playing:Playing
 	//TODO: write docstring
 	play(state:boolean=true){
 		this.playing.next(state)

@@ -3,6 +3,7 @@
 const {suite}=intern.getPlugin("interface.tdd")
 import core from './core'
 suite("core",core);
-import platformer from './core'
-suite("platformer",platformer)
+//TODO: reevalute the entire platformer module
+//import platformer from './platformer'
+//suite("platformer",platformer)
 

@@ -1,6 +1,6 @@
 /** The main file for basic tools used in a platformer */
 import * as core from './core'
-
+/* TODO: reevalute entire module
 export abstract class Input extends core.Input{}
 export interface RenderInfo extends core.RenderInfo{}
 export abstract class Renderer extends core.Renderer{}
@@ -18,7 +18,7 @@ export abstract class Sprite extends core.Sprite{
 	abstract physicsInfo:PhysicsInfo
 	/** Move a sprite.
 	 * @returns A promise so events can be chained
-	 */
+	 *
 	moveTo(x:number,y:number):Promise<null> {
 		return new Promise(()=>{
 			this.physicsInfo.x=x;
@@ -30,4 +30,5 @@ export abstract class Sprite extends core.Sprite{
 export abstract class Collection extends core.Collection{}
 //export abstract class Stage extends core.Stage{}
 //export abstract class Game extends core.Game{}
+*/
 
