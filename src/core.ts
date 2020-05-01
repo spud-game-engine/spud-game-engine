@@ -53,10 +53,12 @@ export type PhysicsActor=(item:Collection|Sprite)=>void
  * the [[Sprite]] or [[Collection]] objects themselves. TODO:verify
  */
 export abstract class Physics{
+	//TODO: move physics_loop here
 	/** Preform a physics check & update on given sprite */
-	abstract physics_loop(sprite:Sprite):void
+	//abstract physics_loop(sprite:Sprite):void
 	/** Preform a physics check & update on given collection */
-	abstract physics_loop(collection:Collection):void
+	//abstract physics_loop(collection:Collection):void
+	abstract attach(collection:Collection):void
 }
 /**
  * An in-game object

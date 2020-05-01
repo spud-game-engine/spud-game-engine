@@ -12,7 +12,7 @@ class BlandRenderer extends core.Renderer{
 	attach(){}
 }
 class BlandPhysics extends core.Physics{
-	physics_loop(){}
+	attach(){}
 }
 class BlandInput extends core.Input{
 	play(){}
@@ -410,78 +410,107 @@ export default function() {
 		suite("physics_loop",()=>{
 			assert.fail("Needs conversion to subscriptions")
 			test("physics",()=>{
-				let unclean=0
-				class CustomRenderer extends core.Renderer {
-					render_loop() {
-						unclean++
-					}
-				}
 				let leftover=5
 				class CustomPhysics extends core.Physics {
-					physics_loop() {
-						leftover--
+					attach(collection:core.Collection){
+						collection.physics_loop.subscribe(()=>{
+							leftover--
+						})
 					}
 				}
-				let s=new BlandCollection(
-						new CustomRenderer(),
-						new CustomPhysics())
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				assert.equal(0,leftover)
-				assert.equal(0,unclean)
+				class CustomCollection extends core.Collection{
+					playing=new Subject<boolean>()
+					physics_loop=new Subject<core.PhysicsActor>()
+					render_loop=new Subject<core.RendererActor>()
+					renderer=new BlandRenderer()
+					physics=new CustomPhysics()
+				}
+				let s=new CustomCollection()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				assert.equal(leftover,0)
 			})
 			test("sprites",()=>{
 				let leftover=5*5 // 5 times called, 5 sprites
 				class CustomSprite extends core.Sprite{
 					physicsInfo={}
 					renderInfo={}
-					physics_loop() {
-						leftover--;
-						return super.physics_loop();//in this context, not really needed, but it is good to have
+					constructor(collection:core.Collection){
+						super(collection)
+						collection.physics_loop.subscribe(()=>{
+							leftover--;
+						})
 					}
 				}
-				let s=new BlandCollection(
-						new BlandRenderer(),
-						new BlandPhysics())
+				class CustomCollection extends core.Collection{
+					playing=new Subject<boolean>()
+					physics_loop=new Subject<core.PhysicsActor>()
+					render_loop=new Subject<core.RendererActor>()
+					renderer=new BlandRenderer()
+					physics=new BlandPhysics()
+					constructor(){
+						super()
+						this.sprites[0]=new CustomSprite(this)
+					}
+				}
+				let s=new BlandCollection()
 
 				for(let i=1;i < 5;i++) {
 					s.sprites[i]=new CustomSprite(s);
 				}
 				s.sprites["Billy bob joe"]=new CustomSprite(s)
 
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
 				assert.equal(0,leftover)
 			})
 			test("collections",()=>{
 				let leftover=5*5 // 5 times called, 5 collections
 				class CustomCollection extends core.Collection{
-					physics_loop() {
-						leftover--;
-						return super.physics_loop();//in this context, not really needed, but it is good to have
+					physics_loop:Subject<core.PhysicsActor>
+					render_loop:Subject<core.RendererActor>
+					playing:Subject<boolean>
+					constructor(collection:core.Collection){
+						super(collection)
+						this.physics_loop=collection.physics_loop
+						this.render_loop=collection.render_loop
+						this.playing=collection.playing
+
+						this.physics_loop.subscribe(()=>{
+							leftover--;
+						})
 					}
 				}
-				let s=new BlandCollection(
-						new BlandRenderer(),
-						new BlandPhysics())
+				class ParentCollection extends core.Collection{
+					playing=new Subject<boolean>()
+					physics_loop=new Subject<core.PhysicsActor>()
+					render_loop=new Subject<core.RendererActor>()
+					renderer=new BlandRenderer()
+					physics=new BlandPhysics()
+					constructor(){
+						super()
+						this.collections[0]=new CustomCollection(this)
+					}
+				}
+				let s=new BlandCollection()
 
 				for(let i=1;i < 5;i++) {
-					s.collections[i]=new CustomCollection(s.renderer,s.physics);
+					s.collections[i]=new CustomCollection(s);
 				}
 
-				s.collections["Billy bob joe"]=new CustomCollection(s.renderer,s.physics);
+				s.collections["Billy bob joe"]=new CustomCollection(s)
 
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
-				s.physics_loop()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
+				s.physics_loop.next()
 				assert.equal(0,leftover)
 			})
 		})
@@ -490,9 +519,7 @@ export default function() {
 		test("constructor",()=>{
 			assert.doesNotThrow(()=>{
 				new BlandSprite(
-					new BlandCollection(
-						new BlandRenderer(),
-						new BlandPhysics()))
+					new BlandCollection())
 			})
 		})
 		/** Does Sprite.render properly call Renderer.render? */
