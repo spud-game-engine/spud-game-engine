@@ -14,7 +14,7 @@ export class Physics extends core.Physics{
 		console.log("In the loop!",arguments);
 	}
 }
-export abstract class Sprite extends core.Stage{
+export abstract class Sprite extends core.Sprite{
 	abstract physicsInfo:PhysicsInfo
 	/** Move a sprite.
 	 * @returns A promise so events can be chained
@@ -28,6 +28,6 @@ export abstract class Sprite extends core.Stage{
 	}
 }
 export abstract class Collection extends core.Collection{}
-export abstract class Stage extends core.Stage{}
-export abstract class Game extends core.Game{}
+//export abstract class Stage extends core.Stage{}
+//export abstract class Game extends core.Game{}
 

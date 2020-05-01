@@ -1,4 +1,4 @@
-import{Game,Stage,Input,Sprite,Renderer,Physics}from"../src/core"
+import{Input,Sprite,Renderer,Physics}from"../src/core"
 
 //Would be imported too
 class MyInput extends Input {
@@ -24,7 +24,7 @@ class MySprite extends Sprite{
 	physicsInfo={}
 	renderInfo={}
 }
-/** The only level */
+/** The only level *
 class MyStage extends Stage {
 	constructor() {
 		super(new MyRenderer(),new MyPhysics(),new MyInput())
@@ -32,7 +32,7 @@ class MyStage extends Stage {
 		//TODO: fix
 		/*this.on("inputUp",()=>{
 			this.sprites.mySprite.move({safe:true}).by(0,1)
-		})*/
+		})*
 	}
 	private interval:any=-1//Type any is easiest way to work around stupid bug. Should be number or Interval
 	private interval1:any=-1
@@ -51,6 +51,7 @@ class MyGame extends Game {
 		super()
 		this.stages.stageOne=new MyStage()
 	}
-}
-new MyGame().play();
+}*/
+//new MyGame().play();
+//TODO: fix demo
 

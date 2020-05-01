@@ -4,7 +4,7 @@
 //From testing, it seems that `tsc` doesn't do this.
 //TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
-//TODO: use rxjs subjects instead of this flimsy event system coded here
+import { Subject } from 'rxjs';
 
 /**
  * The "driver" for input. Detects when the user gives input.
@@ -15,11 +15,14 @@
  */
 export abstract class Input{
 	/** Start listening for input */
-	abstract play(stage:Stage):void
+	//abstract play(stage:Stage):void
 	/** Stop listening for input */
-	abstract pause():void
+	//abstract pause():void
 }
+//TODO: write docstring
 export interface RenderInfo{}
+//TODO: write docstring
+export type RendererActor=(item:Collection|Sprite)=>void
 /**
  * Abstract renderer engine class
  *
@@ -29,12 +32,16 @@ export interface RenderInfo{}
  */
 export abstract class Renderer{
 	/** Render the given sprite */
-	abstract render_loop(sprite:Sprite):void
+	//abstract render_loop(sprite:Sprite):void
 	/** Render the given collection */
-	abstract render_loop(collection:Collection):void
+	//abstract render_loop(collection:Collection):void
+	/** Tell the renderer to listen for events on this collection */
+	abstract attach(collection:Collection):void
 }
 /** Where Physics-specific information about a specific sprite is stored */
 export interface PhysicsInfo{}
+//TODO: write docstring
+export type PhysicsActor=(item:Collection|Sprite)=>void
 /**
  * Abstract physics engine class.
  *
@@ -66,6 +73,9 @@ export abstract class Physics{
  */
 export abstract class Sprite{ 
 	constructor(collection:Collection){
+		if (typeof collection.renderer=="undefined"||
+			typeof collection.physics =="undefined")
+				throw new Error("renderer and physics is required!")//TODO: re-evalute later
 		this.renderer=collection.renderer
 		this.physics=collection.physics
 	}
@@ -73,12 +83,14 @@ export abstract class Sprite{
 	abstract physicsInfo:PhysicsInfo
 	renderer:Renderer
 	physics:Physics
+	/*
 	render_loop() {
 		return this.renderer.render_loop(this)
 	}
 	physics_loop() {
 		return this.physics.physics_loop(this)
 	}
+    */
 }
 /**
  * A collection of [[Sprite]]s and [[Collection]]s
@@ -95,18 +107,38 @@ export abstract class Sprite{
  * or indirectly mannages have been updated. TODO:verify
  */
 export abstract class Collection{ 
-	/** Make a new collection */
-	constructor(renderer:Renderer,physics:Physics){
-		this.renderer=renderer
-		this.physics=physics
+	/** Make a new collection *///TODO: re-evaluate arguments
+	constructor(collection?:Collection){
+		if(typeof collection!=="undefined"){
+			this.renderer=collection.renderer
+			this.physics=collection.physics
+		}
 	}
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
 	collections:{[index:string]:Collection}={}
+
+	//TODO: write docstring
+	abstract render_loop:Subject<RendererActor>
 	/** The reference to the renderer engine */
-	renderer:Renderer
+	renderer?:Renderer
+
+	//TODO: write docstring
+	abstract physics_loop:Subject<PhysicsActor>
 	/** The reference to the physics engine */
-	physics:Physics
+	physics?:Physics
+
+	//TODO: write docstring
+	abstract playing:Subject<boolean>
+	//TODO: write docstring
+	play(state:boolean=true){
+		this.playing.next(state)
+	}
+	//TODO: write docstring
+	pause(state:boolean=true){
+		this.play(!state)
+	}
+	/*
 	render_loop() {//TODO: use promises
 		//Call order is least generic to most
 		for (let i in this.sprites) {
@@ -127,6 +159,7 @@ export abstract class Collection{
 		}
 		this.physics.physics_loop(this)
 	}
+    */
 }
 /**
  * A container for sprites, often used as a level
@@ -138,7 +171,7 @@ export abstract class Collection{
  * constructors inherited from [[Collection]] TODO:verify
  *  * Tell the [[Renderer]] when to render.
  *  * Tell the [[Physics]] when to update.
- */
+ *
 export abstract class Stage extends Collection{
 	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
 		super(renderer,physics)
@@ -148,13 +181,13 @@ export abstract class Stage extends Collection{
 	inputs:Input[]
 	/**
 	 * Play the stage
-	 */
+	 *
    	play() {
 		this.inputs.map((v)=>v.play(this))
 	}
 	/**
 	 * Pause the stage
-	 */
+	 *
 	pause() {
 		this.inputs.map((v)=>v.pause())
 	}
@@ -166,28 +199,29 @@ export abstract class Stage extends Collection{
  * 
  * In charge of holding [[Stage]] instances, and making sure that only one is
  * playing at a time.
- */
+ *
 export abstract class Game{
-	/** The current stage */
+	/** The current stage *
 	stageID:number|string=-1;
-	/** All stages */
+	/** All stages *
 	stages:{[index:string]:Stage}={};
-	/** Is a stage currently running? */
+	/** Is a stage currently running? *
 	private playing:boolean=false
 	/**
 	 * Play the game
 	 * @param id If supplied, sets [[stageID]]
-	 */
+	 *
 	play(id?:number|string) {
 		if(this.playing) this.pause();
 		if (typeof id!="undefined") this.stageID=id;
 		this.stages[this.stageID].play()
 		this.playing=true
 	}
-	/** Pause the game */
+	/** Pause the game *
 	pause() {
 		this.stages[this.stageID].pause()
 		this.playing=false
 	}
 }
+//*/
 
