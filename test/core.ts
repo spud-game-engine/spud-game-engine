@@ -519,6 +519,78 @@ export default function() {
 				assert.equal(0,leftover)
 			})*/
 		})
+		test("starting",()=>{
+			let leftover=3
+			class ChildCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(collection:core.Collection){
+					super()
+					this.playing=collection.playing
+					this.physics=collection.physics
+					this.renderer=collection.renderer
+
+					collection.playing.subscribe((val:boolean)=>{
+						if (val) leftover--
+					})
+				}
+			}
+			class CustomCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(){
+					super()
+					this.playing=new Subject<boolean>()
+					this.physics=new BlandPhysics()
+					this.renderer=new BlandRenderer()
+
+					this.collections[0]=new ChildCollection(this)
+				}
+			}
+			const c = new CustomCollection()
+			c.play()
+			c.play(true)
+			c.pause(false)
+			assert.equal(leftover,0)
+		})
+		test("stopping",()=>{
+			let leftover=3
+			class ChildCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(collection:core.Collection){
+					super()
+					this.playing=new Subject<boolean>()
+					this.physics=new BlandPhysics()
+					this.renderer=new BlandRenderer()
+
+					collection.playing.subscribe((val:boolean)=>{
+						if (!val) leftover--
+					})
+				}
+			}
+			class CustomCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(){
+					super()
+					this.playing=new Subject<boolean>()
+					this.physics=new BlandPhysics()
+					this.renderer=new BlandRenderer()
+
+					this.collections[0]=new ChildCollection(this)
+				}
+			}
+			const c = new CustomCollection()
+			c.pause()
+			c.pause(true)
+			c.play(false)
+			assert.equal(leftover,0)
+		})
 	})
 	suite("Sprite",()=>{
 		test("constructor",()=>{
@@ -581,6 +653,68 @@ export default function() {
 			assert.equal(0,leftover)
 			assert.equal(0,unclean)
 		})*/
+		test("starting",()=>{
+			let leftover=3
+			class CustomSprite extends core.Sprite{
+				physicsInfo={}
+				renderInfo={}
+				constructor(collection:core.Collection){
+					super(collection)
+					collection.playing.subscribe((val:boolean)=>{
+						if (val) leftover--
+					})
+				}
+			}
+			class CustomCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(){
+					super()
+					this.playing=new Subject<boolean>()
+					this.physics=new BlandPhysics()
+					this.renderer=new BlandRenderer()
+
+					this.sprites[0]=new CustomSprite(this)
+				}
+			}
+			const c = new CustomCollection()
+			c.play()
+			c.play(true)
+			c.pause(false)
+			assert.equal(leftover,0)
+		})
+		test("stopping",()=>{
+			let leftover=3
+			class CustomSprite extends core.Sprite{
+				physicsInfo={}
+				renderInfo={}
+				constructor(collection:core.Collection){
+					super(collection)
+					collection.playing.subscribe((val:boolean)=>{
+						if (!val) leftover--
+					})
+				}
+			}
+			class CustomCollection extends core.Collection{
+				playing:core.Playing
+				physics:core.Physics
+				renderer:core.Renderer
+				constructor(){
+					super()
+					this.playing=new Subject<boolean>()
+					this.physics=new BlandPhysics()
+					this.renderer=new BlandRenderer()
+
+					this.sprites[0]=new CustomSprite(this)
+				}
+			}
+			const c = new CustomCollection()
+			c.pause()
+			c.pause(true)
+			c.play(false)
+			assert.equal(leftover,0)
+		})
 	})
 	suite("Game",()=>{
 		/*
