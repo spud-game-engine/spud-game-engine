@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Sprite | spud-game-engine - v0.0.0</title>
+	<title>Stage | spud-game-engine - v0.0.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_core_.html">&quot;core&quot;</a>
 				</li>
 				<li>
-					<a href="_core_.sprite.html">Sprite</a>
+					<a href="_core_.stage.html">Stage</a>
 				</li>
 			</ul>
-			<h1>Class Sprite</h1>
+			<h1>Class Stage</h1>
 		</div>
 	</div>
 </header>
@@ -72,17 +72,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An in-game object</p>
+						<p>A container for sprites, often used as a level</p>
 					</div>
 					<p>In charge of these things:</p>
 					<ul>
-						<li>Tell the <a href="_core_.renderer.html">Renderer</a> and <a href="_core_.physics.html">Physics</a> to update itself. TODO:verify</li>
-						<li>Store information unique to physics (such as the hitbox) in
-						<a href="../interfaces/_core_.physicsinfo.html">PhysicsInfo</a> TODO:verify</li>
-						<li>Store information unique to rendering (such as image resource) in
-						<a href="../interfaces/_core_.renderinfo.html">RenderInfo</a> TODO:verify</li>
-						<li>Directly store information shared between both <a href="_core_.physics.html">Physics</a> and
-						<a href="_core_.renderer.html">Renderer</a> (such as location) TODO:verify</li>
+						<li>Tell the inputs when to play or pause. TODO:verify</li>
+						<li>Allow for input events to trigger changes in the contained sprites and
+						constructors inherited from <a href="_core_.collection.html">Collection</a> TODO:verify</li>
+						<li>Tell the <a href="_core_.renderer.html">Renderer</a> when to render. TODO:verify</li>
+						<li>Tell the <a href="_core_.physics.html">Physics</a> when to update. TODO:verify</li>
 					</ul>
 				</div>
 			</section>
@@ -90,7 +88,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Sprite</span>
+						<span class="target">Stage</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_core_.collection.html" class="tsd-signature-type">Collection</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -99,90 +102,172 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_core_.sprite.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#collections" class="tsd-kind-icon">collections</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#input" class="tsd-kind-icon">input</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#physics" class="tsd-kind-icon">physics</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#playing" class="tsd-kind-icon">playing</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#renderer" class="tsd-kind-icon">renderer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.stage.html#sprites" class="tsd-kind-icon">sprites</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#physics" class="tsd-kind-icon">physics</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#physicsinfo" class="tsd-kind-icon">physics<wbr>Info</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#renderinfo" class="tsd-kind-icon">render<wbr>Info</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_.sprite.html#renderer" class="tsd-kind-icon">renderer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.stage.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.stage.html#play" class="tsd-kind-icon">play</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Sprite<span class="tsd-signature-symbol">(</span>collection<span class="tsd-signature-symbol">: </span><a href="_core_.collection.html" class="tsd-signature-type">Collection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.sprite.html" class="tsd-signature-type">Sprite</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L70">core.ts:70</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>collection: <a href="_core_.collection.html" class="tsd-signature-type">Collection</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_core_.sprite.html" class="tsd-signature-type">Sprite</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="collections" class="tsd-anchor"></a>
+					<h3>collections</h3>
+					<div class="tsd-signature tsd-kind-icon">collections<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L94">core.ts:94</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="_core_.collection.html" class="tsd-signature-type">Collection</a></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="input" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> input</h3>
+					<div class="tsd-signature tsd-kind-icon">input<span class="tsd-signature-symbol">:</span> <a href="_core_.input.html" class="tsd-signature-type">Input</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L97">core.ts:97</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The reference to the input handler</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="physics" class="tsd-anchor"></a>
-					<h3>physics</h3>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> physics</h3>
 					<div class="tsd-signature tsd-kind-icon">physics<span class="tsd-signature-symbol">:</span> <a href="_core_.physics.html" class="tsd-signature-type">Physics</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L78">core.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L103">core.ts:103</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The reference to the physics engine</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="physicsinfo" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> physics<wbr>Info</h3>
-					<div class="tsd-signature tsd-kind-icon">physics<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_.physicsinfo.html" class="tsd-signature-type">PhysicsInfo</a></div>
+					<a name="playing" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> playing</h3>
+					<div class="tsd-signature tsd-kind-icon">playing<span class="tsd-signature-symbol">:</span> <a href="../modules/_core_.html#playing" class="tsd-signature-type">Playing</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L76">core.ts:76</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="renderinfo" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> render<wbr>Info</h3>
-					<div class="tsd-signature tsd-kind-icon">render<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_.renderinfo.html" class="tsd-signature-type">RenderInfo</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L75">core.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L106">core.ts:106</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="renderer" class="tsd-anchor"></a>
-					<h3>renderer</h3>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> renderer</h3>
 					<div class="tsd-signature tsd-kind-icon">renderer<span class="tsd-signature-symbol">:</span> <a href="_core_.renderer.html" class="tsd-signature-type">Renderer</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L77">core.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L100">core.ts:100</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The reference to the renderer engine</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="sprites" class="tsd-anchor"></a>
+					<h3>sprites</h3>
+					<div class="tsd-signature tsd-kind-icon">sprites<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L93">core.ts:93</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The items stored within the collection.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="_core_.sprite.html" class="tsd-signature-type">Sprite</a></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="pause" class="tsd-anchor"></a>
+					<h3>pause</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L114">core.ts:114</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> state: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="play" class="tsd-anchor"></a>
+					<h3>play</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">play<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/352b20c/src/core.ts#L109">core.ts:109</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> state: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -214,33 +299,42 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_core_.renderer.html" class="tsd-kind-icon">Renderer</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.sprite.html" class="tsd-kind-icon">Sprite</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.sprite.html" class="tsd-kind-icon">Sprite</a>
+						<a href="_core_.stage.html" class="tsd-kind-icon">Stage</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_core_.sprite.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_.stage.html#collections" class="tsd-kind-icon">collections</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.sprite.html#physics" class="tsd-kind-icon">physics</a>
+								<a href="_core_.stage.html#input" class="tsd-kind-icon">input</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.sprite.html#physicsinfo" class="tsd-kind-icon">physics<wbr>Info</a>
+								<a href="_core_.stage.html#physics" class="tsd-kind-icon">physics</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.sprite.html#renderinfo" class="tsd-kind-icon">render<wbr>Info</a>
+								<a href="_core_.stage.html#playing" class="tsd-kind-icon">playing</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_core_.sprite.html#renderer" class="tsd-kind-icon">renderer</a>
+								<a href="_core_.stage.html#renderer" class="tsd-kind-icon">renderer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_.stage.html#sprites" class="tsd-kind-icon">sprites</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_.stage.html#pause" class="tsd-kind-icon">pause</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_.stage.html#play" class="tsd-kind-icon">play</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.stage.html" class="tsd-kind-icon">Stage</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_core_.inputinfo.html" class="tsd-kind-icon">Input<wbr>Info</a>
 					</li>
