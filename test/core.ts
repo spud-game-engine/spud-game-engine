@@ -3,7 +3,7 @@
 //import { Task, Evented, request } from '@theintern/common'
 const {suite, test}=intern.getPlugin("interface.tdd")
 const { assert }=intern.getPlugin('chai')
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import * as core from '../src/core'
 
 //TODO: Inputs must have a subject of type `Subject<[string,Observeable<InputInfo>]>` or something like that where the passed observable completes at the end of the input event
@@ -15,15 +15,15 @@ class BlandPhysics extends core.Physics{
 	physics_loop=new Subject<core.PhysicsActor>()
 }
 class BlandInput extends core.Input{
-	play(){}
-	pause(){}
+	event=new Subject<Observable<core.InputInfo>>()
 }
-class BlandCollection extends core.Collection{
+class BlandCollection extends core.Collection{}
+class BlandStage extends core.Stage{
 	playing=new Subject<boolean>()
 	physics=new BlandPhysics()
 	renderer=new BlandRenderer()
+	input=new BlandInput()
 }
-//class BlandStage extends core.Stage{}
 class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
@@ -35,293 +35,131 @@ export default function() {
 	suite("Physics",()=>{})//All sub functions are abstract
 	suite("Input",()=>{})//All sub functions are abstract
 	suite("Stage",()=>{
-		return;//TODO: stage class is probabbly useless
-		/*
-		test("constructor",()=>{
-			assert.doesNotThrow(()=>{
-				new BlandStage(
-					new BlandRenderer(),
-					new BlandPhysics(),
-					new BlandInput())
-			})
-			assert.doesNotThrow(()=>{
-				new BlandStage(
-					new BlandRenderer(),
-					new BlandPhysics(),
-					[
-						new BlandInput(),
-						new BlandInput(),
-						new BlandInput()
-					]
-				)
-			})
-		})
-		suite("subclass",()=>{
-			suite("smallest possible",()=>{
-				test("done right",()=>{
-					class CustomCollection extends core.Collection{
-						constructor() {
-							super(new BlandRenderer(),new BlandPhysics())
-							this.playing=new Subject(()=>{}) // Required
-						}
-					}
-					assert.doesNotThrow(()=>{
-						new CustomCollection()
-					})
-				})
-				test("smallest without playing Subject",()=>{
-					//It's possible that this might not even compile. If that's the case, then this test is useless
-					assert.throws(()=>{
-						class CustomCollection extends core.Collection{
-							constructor() {
-								super(new BlandRenderer(),new BlandPhysics())
-							}
-						}
-						new CustomCollection()
-					})
-				})
-			})
-			suite("with parentCollection",()=>{
-				test("done right",()=>{
-					class CustomCollection extends core.Collection{
-						constructor() {
-							super(new BlandRenderer(),new BlandPhysics(),new BlandCollection(new BlandRenderer(),new BlandPhysics()))
-							this.playing=new Subject(()=>{}) // Required
-						}
-					}
-				})
-				test("smallest without playing Subject",()=>{
-					//It's possible that this might not even compile. If that's the case, then this test is useless
-					assert.throws(()=>{
-						class CustomCollection extends core.Collection{
-							constructor() {
-								super(new BlandRenderer(),new BlandPhysics(),new BlandCollection(new BlandRenderer(),new BlandPhysics()))
-							}
-						}
-						new CustomCollection()
-					})
-				})
-			})
-		})
-		test("play",()=>{
-			let leftover=5
-			class CustomCollection extends core.Collection {
-				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
-					super(renderer,physics,parentCollection)
-					this.playing=parentCollection.playing
-					this.playing.subscribe((val:boolean)=>{
-						if(val) leftover--;
-					})
-				}
-			}
-			class CustomStage extends core.Stage {
-				constructor(renderer:core.Renderer,physics:core.Physics,input:core.Input){
-					super(renderer,physics,input)
-					this.collections[0]=new CustomCollection(renderer,physics,this)
-				}
-			}
-			let c=new CustomStage(
-				new BlandRenderer(),
-				new BlandPhysics(),
-				new BlandInput());
-			c.play();
-			c.play(true);
-			c.pause(false);
-			c.play() //TODO: do we _really_ want to be able to do this?
-				.play();
-			assert.equal(leftover,0)
-		})
-		test("pause",()=>{
-			let leftover=5
-			class CustomCollection extends core.Collection {
-				constructor(renderer:core.Renderer,physics:core.Physics,parentCollection:core.Collection){
-					super(renderer,physics,parentCollection)
-					this.playing=parentCollection.playing //This is required
-					this.playing.subscribe((val:boolean)=>{
-						if(!val) leftover--;
-					})
-				}
-			}
-			class CustomStage extends core.Stage {
-				constructor(renderer:core.Renderer,physics:core.Physics,input:core.Input){
-					super(renderer,physics,input)
-					this.collections[0]=new CustomCollection(renderer,physics,this)
-				}
-			}
-			let c=new CustomStage(
-				new BlandRenderer(),
-				new BlandPhysics(),
-				new BlandInput());
-			c.pause();
-			c.pause(true);
-			c.play(false);
-			c.pause()
-				.pause();
-			assert.equal(leftover,0)
-		})
-		/** Test to see if instances of [[core.Input]] can effect other things *
-		suite("input events",()=>{
-			class CustomInput extends core.Input {
-				attach(collection:core.Collection) {
-					super.attach(collection) //TODO: throws if called twice
-					collection.playing.subscribe((val:boolean)=>{
-						if (val) {
-							for(let i=0;i <5;i++) {
-								this.trigger({ // TODO: verify This is the exact object received in the start subscription
-									type:"",
-									device:"",
-									startTime:new Date(),
-									code:0,
-									value:1
-								})
-							}
-						}
-					})
-				}
-			}
-			test("effects stage",()=>{
-				let leftover=5
-				class CustomStage extends core.Stage {
-					constructor() {
-						super(
-							new BlandRenderer(),
-							new BlandPhysics(),
-							new CustomInput())
-						this.inputs[0].start.subscribe((val:core.InputInfo)=>{
-							leftover--
-						})
-					}
-				}
-				new CustomStage().play()
-				assert.equal(leftover,0)
-			})
-			test("effects bound sprites",()=>{
-				assert.fail("Test not written yet")//TODO: write test
-				let leftover=5
-				class CustomSprite extends core.Sprite{
-					constructor(collection:core.Collection){
-						super(collection)
-						collection.inputs.map()// TODO: perhaps we don't need the stage class then....
-					}
-				}
-				class CustomStage extends core.Stage {
-					constructor() {
-						super(
-							new BlandRenderer(),
-							new BlandPhysics(),
-							new CustomInput())
-						this.sprites[0]=new CustomSprite(this)
-						this.inputs[0].start.subscribe((val:core.InputInfo)=>{
-							leftover--
-						})
-					}
-				}
-				new CustomStage().play()
-				assert.equal(leftover,0)
-			})
-			test("effects bound collections",()=>{
-				assert.fail("Test not written yet")//TODO: write test
-			})
-		})
-		test("render events",()=>{
-			assert.fail("Test not written yet")//TODO: write test
-		})
-		test("physics events",()=>{
-			assert.fail("Test not written yet")//TODO: write test
-		})
-	   	*/
-	})
-	suite("Collection",()=>{
 		suite("constructor",()=>{
-			test("acting as child",()=>{
+			test("with child",()=>{
 				assert.doesNotThrow(()=>{
-					class CustomCollection extends core.Collection{
-						physics:core.Physics
-						renderer:core.Renderer
-						playing:core.Playing
-						constructor(collection:core.Collection){
-							super()
-							this.physics=collection.physics
-							this.renderer=collection.renderer
-							this.playing=collection.playing
-						}
-					}
-					class ParentCollection extends core.Collection{
+					class CustomStage extends core.Stage{
 						playing=new Subject<boolean>()
 						renderer=new BlandRenderer()
 						physics=new BlandPhysics()
+						input=new BlandInput()
+						constructor(){
+							super()
+							this.collections[0]=new BlandCollection(this)
+						}
+					}
+					new CustomStage()
+				})
+			})
+			test("without child",()=>{
+				assert.doesNotThrow(()=>{
+					class CustomStage extends core.Stage{
+						playing=new Subject<boolean>()
+						renderer=new BlandRenderer()
+						physics=new BlandPhysics()
+						input=new BlandInput()
+					}
+					new CustomStage()
+				})
+			})
+		})
+		test("starting",()=>{
+			let leftover=3
+			class ChildCollection extends core.Collection{
+				constructor(collection:core.Collection){
+					super(collection)
+
+					collection.playing.subscribe((val:boolean)=>{
+						if (val) leftover--
+					})
+				}
+			}
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
+				constructor(){
+					super()
+
+					this.collections[0]=new ChildCollection(this)
+				}
+			}
+			const c = new CustomStage()
+			c.play()
+			c.play(true)
+			c.pause(false)
+			assert.equal(leftover,0)
+		})
+		test("stopping",()=>{
+			let leftover=3
+			class ChildCollection extends core.Collection{
+				constructor(collection:core.Collection){
+					super(collection)
+
+					collection.playing.subscribe((val:boolean)=>{
+						if (!val) leftover--
+					})
+				}
+			}
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
+				constructor(){
+					super()
+
+					this.collections[0]=new ChildCollection(this)
+				}
+			}
+			const c = new CustomStage()
+			c.pause()
+			c.pause(true)
+			c.play(false)
+			assert.equal(leftover,0)
+		})
+	})
+	suite("Collection",()=>{
+		suite("subclass",()=>{
+			test("acting as parent of another collection",()=>{
+				assert.doesNotThrow(()=>{
+					class CustomCollection extends core.Collection{
+						constructor(collection:core.Collection){
+							super(collection)
+							this.collections[0]=new BlandCollection(this)
+						}
+					}
+					class CustomStage extends core.Stage{
+						input=new BlandInput()
+						physics=new BlandPhysics()
+						renderer=new BlandRenderer()
+						playing=new Subject<boolean>()
 						constructor(){
 							super()
 							this.collections[0]=new CustomCollection(this)
 						}
 					}
-					new BlandCollection()
+					new CustomStage()
 				})
 			})
 			test("normal",()=>{
 				assert.doesNotThrow(()=>{
 					class CustomCollection extends core.Collection{
-						playing=new Subject<boolean>()
-						physics_loop=new Subject<core.PhysicsActor>()
-						render_loop=new Subject<core.RendererActor>()
-						renderer=new BlandRenderer()
+						//Note how this is exactly the same as [[BlandCollection]]
+					}
+					class CustomStage extends core.Stage{
+						input=new BlandInput()
 						physics=new BlandPhysics()
+						renderer=new BlandRenderer()
+						playing=new Subject<boolean>()
+						constructor(){
+							super()
+							this.collections[0]=new CustomCollection(this)
+						}
 					}
-					new CustomCollection()
+					new CustomStage()
 				})
-			})
-			/* We might not want these for now...
-			test("array of renderers",()=>{
-				assert.doesNotThrow(()=>{
-					new BlandCollection(
-						[
-							new BlandRenderer(),
-							new BlandRenderer()
-						],
-						new BlandPhysics())
-				})
-			})
-			test("array of physics",()=>{
-				assert.doesNotThrow(()=>{
-					new BlandCollection(
-						new BlandRenderer(),
-						[
-							new BlandPhysics(),
-							new BlandPhysics()
-						]
-					)
-				})
-			})
-			test("array of physics and renders",()=>{
-				assert.doesNotThrow(()=>{
-					new BlandCollection(
-						[
-							new BlandRenderer(),
-							new BlandRenderer()
-						],
-						[
-							new BlandPhysics(),
-							new BlandPhysics()
-						]
-					)
-				})
-			})
-		   	*/
-		})
-		suite("subclass",()=>{
-			test("with child collection",()=>{
-				class CustomCollection extends core.Collection {
-					playing=new Subject<boolean>()
-					physics_loop=new Subject<core.PhysicsActor>()
-					render_loop=new Subject<core.RendererActor>()
-					physics=new BlandPhysics()
-					renderer=new BlandRenderer()
-					constructor() {
-						super()
-						this.collections[0]=new BlandCollection()
-					}
-				}
-				//TODO: assert something
 			})
 		})
 		suite("render_loop",()=>{
@@ -410,7 +248,6 @@ export default function() {
 			test("call order",()=>assert.fail("Test not written yet..."))
 		    */
 		})
-		/** Does Collection.physics_loop properly call Physics.physics_loop? */
 		suite("physics_loop",()=>{
 			return; /* TODO: we don't seem to need this...
 			assert.fail("Needs conversion to subscriptions")
@@ -522,34 +359,30 @@ export default function() {
 		test("starting",()=>{
 			let leftover=3
 			class ChildCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
 				constructor(collection:core.Collection){
-					super()
-					this.playing=collection.playing
-					this.physics=collection.physics
-					this.renderer=collection.renderer
-
+					super(collection)
 					collection.playing.subscribe((val:boolean)=>{
 						if (val) leftover--
 					})
 				}
 			}
 			class CustomCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
-				constructor(){
-					super()
-					this.playing=new Subject<boolean>()
-					this.physics=new BlandPhysics()
-					this.renderer=new BlandRenderer()
-
+				constructor(stage:core.Stage){
+					super(stage)
 					this.collections[0]=new ChildCollection(this)
 				}
 			}
-			const c = new CustomCollection()
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
+				constructor(){
+					super()
+					this.collections[0]=new CustomCollection(this)
+				}
+			}
+			const c = new CustomStage()
 			c.play()
 			c.play(true)
 			c.pause(false)
@@ -558,34 +391,30 @@ export default function() {
 		test("stopping",()=>{
 			let leftover=3
 			class ChildCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
 				constructor(collection:core.Collection){
-					super()
-					this.playing=new Subject<boolean>()
-					this.physics=new BlandPhysics()
-					this.renderer=new BlandRenderer()
-
+					super(collection)
 					collection.playing.subscribe((val:boolean)=>{
 						if (!val) leftover--
 					})
 				}
 			}
 			class CustomCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
-				constructor(){
-					super()
-					this.playing=new Subject<boolean>()
-					this.physics=new BlandPhysics()
-					this.renderer=new BlandRenderer()
-
+				constructor(stage:core.Stage){
+					super(stage)
 					this.collections[0]=new ChildCollection(this)
 				}
 			}
-			const c = new CustomCollection()
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
+				constructor(){
+					super()
+					this.collections[0]=new CustomCollection(this)
+				}
+			}
+			const c = new CustomStage()
 			c.pause()
 			c.pause(true)
 			c.play(false)
@@ -596,7 +425,7 @@ export default function() {
 		test("constructor",()=>{
 			assert.doesNotThrow(()=>{
 				new BlandSprite(
-					new BlandCollection())
+					new BlandStage())
 			})
 		})
 		/** Does Sprite.render properly call Renderer.render? * TODO: we don't seem to need these
@@ -665,20 +494,17 @@ export default function() {
 					})
 				}
 			}
-			class CustomCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
 				constructor(){
 					super()
-					this.playing=new Subject<boolean>()
-					this.physics=new BlandPhysics()
-					this.renderer=new BlandRenderer()
-
 					this.sprites[0]=new CustomSprite(this)
 				}
 			}
-			const c = new CustomCollection()
+			const c = new CustomStage()
 			c.play()
 			c.play(true)
 			c.pause(false)
@@ -696,118 +522,22 @@ export default function() {
 					})
 				}
 			}
-			class CustomCollection extends core.Collection{
-				playing:core.Playing
-				physics:core.Physics
-				renderer:core.Renderer
+			class CustomStage extends core.Stage{
+				playing=new Subject<boolean>()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				input=new BlandInput()
 				constructor(){
 					super()
-					this.playing=new Subject<boolean>()
-					this.physics=new BlandPhysics()
-					this.renderer=new BlandRenderer()
-
 					this.sprites[0]=new CustomSprite(this)
 				}
 			}
-			const c = new CustomCollection()
+			const c = new CustomStage()
 			c.pause()
 			c.pause(true)
 			c.play(false)
 			assert.equal(leftover,0)
 		})
-	})
-	suite("Game",()=>{
-		/*
-		test("constructor",()=>{
-			assert.doesNotThrow(()=>{
-				new BlandGame();
-			})
-		})
-		suite("play & pause",()=>{
-			assert.fail("Needs conversion to subscriptions")
-			test("no args",()=>{
-				let leftoverPlay=5;
-				let leftoverPause=5;
-				class CustomStage extends core.Stage{
-					constructor() {
-						super(
-							new BlandRenderer(),
-							new BlandPhysics(),
-							new BlandInput())
-					}
-					play() {
-						leftoverPlay--;
-						super.play()
-					}
-					pause() {
-						leftoverPause--;
-						super.pause()
-					}
-				}
-				let b=new BlandGame();
-				b.stages["lol"]=new CustomStage();
-				b.stageID="lol";
-				b.play();b.pause();
-				b.play();b.pause()
-				b.play();b.pause()
-				b.play();b.pause()
-				b.play();b.pause()
-				assert.equal(leftoverPlay,0,"Number of times play was triggered");
-				assert.equal(leftoverPause,0,"Number of times pause was triggered");
-			})
-			test("with args",()=>{
-				let leftoverPlay=5;
-				let leftoverPause=5;
-				class CustomStage extends core.Stage{
-					constructor() {
-						super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
-					}
-					play() {
-						leftoverPlay--;
-						super.play()
-					}
-					pause() {
-						leftoverPause--;
-						super.pause()
-					}
-				}
-				let b=new BlandGame();
-				for(let i=0;i <5;i++){
-					b.stages[i]=new CustomStage();
-				}
-				for(let i=0;i <5;i++){
-					b.play(Math.round(Math.random()*4));
-					b.pause();
-				}
-				assert.equal(leftoverPlay,0,"Number of times play was triggered");
-				assert.equal(leftoverPause,0,"Number of times pause was triggered");
-			})
-			test("auto pauses",()=>{
-				let playing=false;
-				class CustomStage extends core.Stage{
-					constructor(){
-						super(new BlandRenderer(),new BlandPhysics(),new BlandInput())
-					}
-					play() {
-						super.play()
-						playing=true;
-					}
-					pause() {
-						super.pause()
-						playing=false;
-					}
-				}
-				assert.isFalse(playing)
-				let g=new BlandGame();
-				g.stages["first"]=new CustomStage()
-				g.stages["next"]=new BlandStage(new BlandRenderer(),new BlandPhysics(),new BlandInput())
-				g.play("first")
-				assert.isTrue(playing)
-				g.play("next")
-				assert.isFalse(playing)
-			})
-		})
-	   */
 	})
 }
 

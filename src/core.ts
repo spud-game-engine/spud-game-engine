@@ -4,8 +4,9 @@
 //From testing, it seems that `tsc` doesn't do this.
 //TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
+//TODO: explain
 export type Playing=Subject<boolean>
 /**
  * The "driver" for input. Detects when the user gives input.
@@ -15,12 +16,12 @@ export type Playing=Subject<boolean>
  *  * Listening for input from all players (and distinguishing them) TODO:verify
  */
 export abstract class Input{
-	/** Start listening for input */
-	//abstract play(stage:Stage):void
-	/** Stop listening for input */
-	//abstract pause():void
+	//TODO: explain _why_ this is so strange (and specific too)
+	abstract event:Subject<Observable<InputInfo>>
 }
-//TODO: write docstring
+//TODO: explain
+export interface InputInfo{}
+/** Where render-specific information about a sprite is stored */
 export interface RenderInfo{}
 //TODO: write docstring
 export type RendererActor=(item:Collection|Sprite)=>void
@@ -32,11 +33,6 @@ export type RendererActor=(item:Collection|Sprite)=>void
  *  * Show sprites animating on "screen" (whatever screen that may be) TODO:verify
  */
 export abstract class Renderer{
-	/** Render the given sprite */
-	//abstract render_loop(sprite:Sprite):void
-	/** Render the given collection */
-	//abstract render_loop(collection:Collection):void
-	/** Tell the renderer to listen for events on this collection */
 	//TODO: write docstring
 	abstract render_loop:Subject<RendererActor>
 }
@@ -55,10 +51,6 @@ export type PhysicsActor=(item:Collection|Sprite)=>void
  * the [[Sprite]] or [[Collection]] objects themselves. TODO:verify
  */
 export abstract class Physics{
-	/** Preform a physics check & update on given sprite */
-	//abstract physics_loop(sprite:Sprite):void
-	/** Preform a physics check & update on given collection */
-	//abstract physics_loop(collection:Collection):void
 	//TODO: write docstring
 	abstract physics_loop:Subject<PhysicsActor>
 }
@@ -84,33 +76,25 @@ export abstract class Sprite{
 	abstract physicsInfo:PhysicsInfo
 	renderer:Renderer
 	physics:Physics
-	/*
-	render_loop() {
-		return this.renderer.render_loop(this)
-	}
-	physics_loop() {
-		return this.physics.physics_loop(this)
-	}
-    */
 }
 /**
- * A collection of [[Sprite]]s and [[Collection]]s
- *
+ * A container for sprites, often used as a level
+ * 
  * In charge of these things:
  * 
- *  * Holding other instances of [[Collection]]
- *  * Holding instances of [[Sprite]]
- *  * Pass down the message of when the [[Renderer]] was told to render.
- *  * Pass down the message of when [[Physics]] was told to update.
- *  * Tell the [[Renderer]] when all instances of [[Sprite]] that this directly
- * or indirectly mannages are rendered. TODO:verify
- *  * Tell the [[Physics]] when all instances of [[Sprite]] that this directly
- * or indirectly mannages have been updated. TODO:verify
+ *  * Tell the inputs when to play or pause. TODO:verify
+ *  * Allow for input events to trigger changes in the contained sprites and
+ * constructors inherited from [[Collection]] TODO:verify
+ *  * Tell the [[Renderer]] when to render. TODO:verify
+ *  * Tell the [[Physics]] when to update. TODO:verify
  */
-export abstract class Collection{ 
+export abstract class Stage {
 	/** The items stored within the collection. */
 	sprites:{[index:string]:Sprite}={}
 	collections:{[index:string]:Collection}={}
+
+	/** The reference to the input handler */
+	abstract input:Input
 
 	/** The reference to the renderer engine */
 	abstract renderer:Renderer
@@ -120,98 +104,43 @@ export abstract class Collection{
 
 	//TODO: write docstring
 	abstract playing:Playing
+
 	//TODO: write docstring
 	play(state:boolean=true){
 		this.playing.next(state)
 	}
+
 	//TODO: write docstring
 	pause(state:boolean=true){
 		this.play(!state)
 	}
-	/*
-	render_loop() {//TODO: use promises
-		//Call order is least generic to most
-		for (let i in this.sprites) {
-			this.sprites[i].render_loop();
-		}
-		for (let i in this.collections) {
-			this.collections[i].render_loop();
-		}
-		this.renderer.render_loop(this)
-	}
-	physics_loop(){//TODO: use promises
-		//Call order is least generic to most
-		for (let i in this.sprites) {
-			this.sprites[i].physics_loop();
-		}
-		for (let i in this.collections) {
-			this.collections[i].physics_loop();
-		}
-		this.physics.physics_loop(this)
-	}
-    */
-}
-/**
- * A container for sprites, often used as a level
- * 
- * In charge of these things:
- * 
- *  * Tell the inputs when to play or pause.
- *  * Allow for input events to trigger changes in the contained sprites and
- * constructors inherited from [[Collection]] TODO:verify
- *  * Tell the [[Renderer]] when to render.
- *  * Tell the [[Physics]] when to update.
- *
-export abstract class Stage extends Collection{
-	constructor(renderer:Renderer,physics:Physics,input:Input|Input[]){
-		super(renderer,physics)
-		if(input instanceof Input) input=[input];
-		this.inputs=input;
-	}
-	inputs:Input[]
-	/**
-	 * Play the stage
-	 *
-   	play() {
-		this.inputs.map((v)=>v.play(this))
-	}
-	/**
-	 * Pause the stage
-	 *
-	pause() {
-		this.inputs.map((v)=>v.pause())
-	}
-}
-//TODO: validate a need once I'm done integrating with rxjs
-/**
- * The base class for all games that have need for more than one
- * stage
- * 
- * In charge of holding [[Stage]] instances, and making sure that only one is
- * playing at a time.
- *
-export abstract class Game{
-	/** The current stage *
-	stageID:number|string=-1;
-	/** All stages *
-	stages:{[index:string]:Stage}={};
-	/** Is a stage currently running? *
-	private playing:boolean=false
-	/**
-	 * Play the game
-	 * @param id If supplied, sets [[stageID]]
-	 *
-	play(id?:number|string) {
-		if(this.playing) this.pause();
-		if (typeof id!="undefined") this.stageID=id;
-		this.stages[this.stageID].play()
-		this.playing=true
-	}
-	/** Pause the game *
-	pause() {
-		this.stages[this.stageID].pause()
-		this.playing=false
-	}
 }
 //*/
+/**
+ * A collection of [[Sprite]]s and [[Collection]]s
+ *
+ * In charge of these things:
+ * 
+ *  * Holding other instances of [[Collection]] TODO:verify
+ *  * Holding instances of [[Sprite]] TODO:verify
+ *  * Pass down the message of when the [[Renderer]] was told to render. TODO:verify
+ *  * Pass down the message of when [[Physics]] was told to update. TODO:verify
+ *  * Tell the [[Renderer]] when all instances of [[Sprite]] that this directly
+ * or indirectly mannages are rendered. TODO:verify
+ *  * Tell the [[Physics]] when all instances of [[Sprite]] that this directly
+ * or indirectly mannages have been updated. TODO:verify
+ */
+export abstract class Collection extends Stage{ 
+	input:Input
+	renderer:Renderer
+	physics:Physics
+	playing:Playing
+	constructor(collection:Collection|Stage){
+		super()
+		this.input=collection.input
+		this.renderer=collection.renderer
+		this.physics=collection.physics
+		this.playing=collection.playing
+	}
+}
 
