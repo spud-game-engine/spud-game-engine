@@ -135,12 +135,12 @@ export abstract class Collection extends Stage{
 	renderer:Renderer
 	physics:Physics
 	playing:Playing
-	constructor(collection:Collection|Stage){
+	constructor(collection_or_stage:Collection|Stage){
 		super()
-		this.input=collection.input
-		this.renderer=collection.renderer
-		this.physics=collection.physics
-		this.playing=collection.playing
+		this.input=collection_or_stage.input
+		this.renderer=collection_or_stage.renderer
+		this.physics=collection_or_stage.physics
+		this.playing=collection_or_stage.playing
 	}
 }
 
