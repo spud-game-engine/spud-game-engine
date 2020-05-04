@@ -16,8 +16,12 @@ export type Playing=Subject<boolean>
  *  * Listening for input from all players (and distinguishing them) TODO:verify
  */
 export abstract class Input{
-	//TODO: explain _why_ this is so strange (and specific too)
+	/** Inputs must have a subject where the passed observable completes at the end
+	 *  of the input event
+	 */
 	abstract event:Subject<Observable<InputInfo>>
+	//TODO: explain //TODO: evaluate optionability
+	constructor(stage?:Stage|Collection){}
 }
 //TODO: explain
 export interface InputInfo{}

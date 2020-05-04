@@ -6,7 +6,6 @@ const { assert }=intern.getPlugin('chai')
 import { Subject, Observable } from 'rxjs';
 import * as core from '../src/core'
 
-//TODO: Inputs must have a subject of type `Subject<[string,Observeable<InputInfo>]>` or something like that where the passed observable completes at the end of the input event
 
 class BlandRenderer extends core.Renderer{
 	render_loop=new Subject<core.RendererActor>()
@@ -33,7 +32,67 @@ class BlandSprite extends core.Sprite{
 export default function() {
 	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
 	suite("Physics",()=>{})//All sub functions are abstract
-	suite("Input",()=>{})//All sub functions are abstract
+	suite("Input",()=>{
+		test("subclass",()=>{
+			class CustomInput extends core.Input{
+				event=new Subject<Observable<core.InputInfo>>()
+			}
+			class CustomStage extends core.Stage {
+				input=new CustomInput()
+				physics=new BlandPhysics()
+				renderer=new BlandRenderer()
+				playing=new Subject<boolean>()
+			}
+			assert.doesNotThrow(()=>{
+				new CustomStage()
+			})
+		})
+		suite("getsPlaying",()=>{
+			test("starting",()=>{
+				let canPlay:boolean=false
+				class CustomInput extends core.Input {
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage){
+						super(stage)
+						stage.playing.subscribe((val:boolean)=>{
+							canPlay=val
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+				}
+				new CustomStage().play()
+				assert.isTrue(canPlay)
+			})
+			test("stopping",()=>{
+				let canPause:boolean=false
+				class CustomInput extends core.Input {
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage){
+						super(stage)
+						stage.playing.subscribe((val:boolean)=>{
+							canPause=!val
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+				}
+				new CustomStage().pause()
+				assert.isTrue(canPause)
+			})
+		})
+		test("sends input events",()=>{
+			assert.fail("Not written yet")//TODO: write test
+		})
+	})
 	suite("Stage",()=>{
 		suite("constructor",()=>{
 			test("with child",()=>{
