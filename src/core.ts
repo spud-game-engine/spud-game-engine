@@ -20,11 +20,27 @@ export abstract class Input{
 	 *  of the input event
 	 */
 	abstract event:Subject<Observable<InputInfo>>
+	//TODO: explain
+	playing:Playing
 	//TODO: explain //TODO: evaluate optionability
-	constructor(stage?:Stage|Collection){}
+	constructor(stage:Stage|Collection){
+		this.playing=stage.playing
+	}
+	//TODO: observable to handle new devices
 }
 //TODO: explain
-export interface InputInfo{}
+export interface InputInfo{//TODO: adjust to better fit needs later
+	//TODO: explain
+	device:string|number|Array<string|number>
+	/** The timestamp at wich the event started */
+	startTime:Date
+	//TODO: explain
+	key:number
+	//TODO: explain
+	value:number|Array<number>
+	//TODO: explain
+	valueHistory?:Array<InputInfo["value"]>
+}
 /** Where render-specific information about a sprite is stored */
 export interface RenderInfo{}
 //TODO: write docstring

@@ -5,6 +5,8 @@ const {suite, test}=intern.getPlugin("interface.tdd")
 const { assert }=intern.getPlugin('chai')
 import { Subject, Observable } from 'rxjs';
 import * as core from '../src/core'
+/*TODO: make a version of the API where instead of implimenting abstract
+classes, you pass complicated parameters to a function. (Factory) */
 
 
 class BlandRenderer extends core.Renderer{
@@ -21,27 +23,27 @@ class BlandStage extends core.Stage{
 	playing=new Subject<boolean>()
 	physics=new BlandPhysics()
 	renderer=new BlandRenderer()
-	input=new BlandInput()
+	input:core.Input=new BlandInput(this)
 }
 class BlandSprite extends core.Sprite{
 	physicsInfo={}
 	renderInfo={}
 }
-//class BlandGame extends core.Game{}
 
 export default function() {
 	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
 	suite("Physics",()=>{})//All sub functions are abstract
 	suite("Input",()=>{
 		test("subclass",()=>{
+			//TODO: improove this test
 			class CustomInput extends core.Input{
 				event=new Subject<Observable<core.InputInfo>>()
 			}
 			class CustomStage extends core.Stage {
-				input=new CustomInput()
+				playing=new Subject<boolean>()
+				input:core.Input=new CustomInput(this)
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				playing=new Subject<boolean>()
 			}
 			assert.doesNotThrow(()=>{
 				new CustomStage()
@@ -54,7 +56,7 @@ export default function() {
 					event=new Subject<Observable<core.InputInfo>>()
 					constructor(stage:core.Stage){
 						super(stage)
-						stage.playing.subscribe((val:boolean)=>{
+						this.playing.subscribe((val:boolean)=>{
 							canPlay=val
 						})
 					}
@@ -74,7 +76,7 @@ export default function() {
 					event=new Subject<Observable<core.InputInfo>>()
 					constructor(stage:core.Stage){
 						super(stage)
-						stage.playing.subscribe((val:boolean)=>{
+						this.playing.subscribe((val:boolean)=>{
 							canPause=!val
 						})
 					}
@@ -89,8 +91,77 @@ export default function() {
 				assert.isTrue(canPause)
 			})
 		})
-		test("sends input events",()=>{
-			assert.fail("Not written yet")//TODO: write test
+		suite("sends input events",()=>{
+			test("basic",()=>{
+				return assert.fail("Test should be reconcidered");
+				let receivedEvent=false
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						this.event.next()
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+					constructor() {
+						super()
+						this.input.event.subscribe(()=>{
+							receivedEvent=true
+						})
+					}
+				}
+				new CustomStage()
+				assert.isTrue(receivedEvent)
+			})
+			test("event start",()=>{
+				let receivedEvent=false
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.subscribe((val:boolean)=>{
+							if (!val) return
+							this.event.next(new Observable((s)=>{
+								s.next({
+									device:0,
+									startTime:new Date(),
+									key:0,
+									value:0
+								})
+							}))
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+					constructor() {
+						super()
+						this.input.event.subscribe((e)=>{
+							e.subscribe(()=>{
+								receivedEvent=true
+							})
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.isTrue(receivedEvent)
+			})
+			test("event continue",()=>{
+				assert.fail("Not written yet")//TODO: write test
+			})
+			test("event end",()=>{
+				assert.fail("Not written yet")//TODO: write test
+			})
 		})
 	})
 	suite("Stage",()=>{
@@ -101,7 +172,7 @@ export default function() {
 						playing=new Subject<boolean>()
 						renderer=new BlandRenderer()
 						physics=new BlandPhysics()
-						input=new BlandInput()
+						input:core.Input=new BlandInput(this)
 						constructor(){
 							super()
 							this.collections[0]=new BlandCollection(this)
@@ -116,7 +187,7 @@ export default function() {
 						playing=new Subject<boolean>()
 						renderer=new BlandRenderer()
 						physics=new BlandPhysics()
-						input=new BlandInput()
+						input:core.Input=new BlandInput(this)
 					}
 					new CustomStage()
 				})
@@ -137,7 +208,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 
@@ -165,7 +236,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 
@@ -190,7 +261,7 @@ export default function() {
 						}
 					}
 					class CustomStage extends core.Stage{
-						input=new BlandInput()
+						input:core.Input=new BlandInput(this)
 						physics=new BlandPhysics()
 						renderer=new BlandRenderer()
 						playing=new Subject<boolean>()
@@ -208,7 +279,7 @@ export default function() {
 						//Note how this is exactly the same as [[BlandCollection]]
 					}
 					class CustomStage extends core.Stage{
-						input=new BlandInput()
+						input:core.Input=new BlandInput(this)
 						physics=new BlandPhysics()
 						renderer=new BlandRenderer()
 						playing=new Subject<boolean>()
@@ -435,7 +506,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 					this.collections[0]=new CustomCollection(this)
@@ -467,7 +538,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 					this.collections[0]=new CustomCollection(this)
@@ -557,7 +628,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 					this.sprites[0]=new CustomSprite(this)
@@ -585,7 +656,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				physics=new BlandPhysics()
 				renderer=new BlandRenderer()
-				input=new BlandInput()
+				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
 					this.sprites[0]=new CustomSprite(this)

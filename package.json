@@ -18,9 +18,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "regenerator-runtime": "^0.13.5",
     "rxjs": "^6.5.5",
-    "set-interval-async": "^1.0.30",
     "tslib": "^1.11.1"
   },
   "scripts": {
