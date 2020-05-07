@@ -5,6 +5,7 @@
 //TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
 import { Subject, Observable } from 'rxjs';
+import { map, filter } from "rxjs/operators";
 
 //TODO: explain
 export type Playing=Subject<boolean>
@@ -32,14 +33,10 @@ export abstract class Input{
 export interface InputInfo{//TODO: adjust to better fit needs later
 	//TODO: explain
 	device:string|number|Array<string|number>
-	/** The timestamp at wich the event started */
-	startTime:Date
 	//TODO: explain
 	key:number
 	//TODO: explain
 	value:number|Array<number>
-	//TODO: explain
-	valueHistory?:Array<InputInfo["value"]>
 }
 /** Where render-specific information about a sprite is stored */
 export interface RenderInfo{}

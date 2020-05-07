@@ -4,6 +4,7 @@
 const {suite, test}=intern.getPlugin("interface.tdd")
 const { assert }=intern.getPlugin('chai')
 import { Subject, Observable } from 'rxjs';
+import { filter } from "rxjs/operators";
 import * as core from '../src/core'
 /*TODO: make a version of the API where instead of implimenting abstract
 classes, you pass complicated parameters to a function. (Factory) */
@@ -92,7 +93,7 @@ export default function() {
 			})
 		})
 		suite("sends input events",()=>{
-			test("basic",()=>{
+			/*test("basic",()=>{
 				return assert.fail("Test should be reconcidered");
 				let receivedEvent=false
 				class CustomInput extends core.Input{
@@ -116,20 +117,18 @@ export default function() {
 				}
 				new CustomStage()
 				assert.isTrue(receivedEvent)
-			})
+			})*/
 			test("event start",()=>{
-				let receivedEvent=false
+				let receivedEvent=0
 				class CustomInput extends core.Input{
 					event=new Subject<Observable<core.InputInfo>>()
 					constructor(stage:core.Stage) {
 						super(stage)
 						//See comment in CustomStage below
-						this.playing.subscribe((val:boolean)=>{
-							if (!val) return
+						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
 							this.event.next(new Observable((s)=>{
 								s.next({
 									device:0,
-									startTime:new Date(),
 									key:0,
 									value:0
 								})
@@ -147,20 +146,116 @@ export default function() {
 						super()
 						this.input.event.subscribe((e)=>{
 							e.subscribe(()=>{
-								receivedEvent=true
+								receivedEvent++
 							})
 						})
 						this.play()
 					}
 				}
 				new CustomStage()
-				assert.isTrue(receivedEvent)
+				assert.equal(receivedEvent,1)
 			})
 			test("event continue",()=>{
-				assert.fail("Not written yet")//TODO: write test
+				let receivedFirstEvent=0,
+					numberOfContinuedEvents=0;
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.subscribe((val:boolean)=>{
+							if (!val) return
+							this.event.next(new Observable((s)=>{
+								for(let i=0;i <5;i++){
+									s.next({
+										device:0,
+										key:0,
+										value:0
+									})
+								}
+							}))
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+					constructor() {
+						super()
+						this.input.event.subscribe((e)=>{
+							numberOfContinuedEvents=0//This is to make sure we did things right
+							e.subscribe((event)=>{
+								if (receivedFirstEvent <=0){
+									receivedFirstEvent++
+								}else{
+									numberOfContinuedEvents++
+								}
+							})
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.equal(receivedFirstEvent,1)
+				assert.equal(numberOfContinuedEvents,4)
 			})
 			test("event end",()=>{
-				assert.fail("Not written yet")//TODO: write test
+				let receivedFirstEvent=0,
+					receivedLastEvent=0,
+					numberOfContinuedEvents=0;
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputInfo>>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.pipe(filter(x=>x))
+							.subscribe((val:boolean)=>{
+							this.event.next(new Observable((s)=>{
+								for(let i=0;i <5;i++){
+									s.next({
+										device:0,
+										key:0,
+										value:0
+									})
+								}
+								s.complete()
+							}))
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics=new BlandPhysics()
+					renderer=new BlandRenderer()
+					constructor() {
+						super()
+						this.input.event.subscribe((e)=>{
+							numberOfContinuedEvents=0//This is to make sure we did things right
+							e.subscribe({
+								next:(event)=>{
+									if (receivedFirstEvent <=0){
+										receivedFirstEvent++
+									}else{
+										numberOfContinuedEvents++
+									}
+								},
+								complete:()=>{
+									receivedLastEvent++
+								}
+							})
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.equal(receivedFirstEvent,1)
+				assert.equal(receivedLastEvent,1)
+				assert.equal(numberOfContinuedEvents,4)
 			})
 		})
 	})
