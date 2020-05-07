@@ -5,7 +5,6 @@
 //TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
 import { Subject, Observable } from 'rxjs';
-import { map, filter } from "rxjs/operators";
 
 //TODO: explain
 export type Playing=Subject<boolean>

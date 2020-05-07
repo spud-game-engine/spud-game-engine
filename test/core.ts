@@ -33,7 +33,51 @@ class BlandSprite extends core.Sprite{
 
 export default function() {
 	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
-	suite("Physics",()=>{})//All sub functions are abstract
+	suite("Physics",()=>{
+		test("subclass",()=>{
+			assert.fail("Test not written yet")
+		})
+		suite("getsPlaying",()=>{
+			test("starting",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("stopping",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+		suite("can get information about sprites",()=>{
+			test("physics info",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("general info",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+		suite("can get information about collections",()=>{
+			test("physics info",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("general info",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+		suite("can set information about sprites",()=>{
+			test("physics info",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("general info",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+		suite("can set information about collections",()=>{
+			test("physics info",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("general info",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+	})
 	suite("Input",()=>{
 		test("subclass",()=>{
 			//TODO: improove this test
