@@ -35,7 +35,18 @@ export default function() {
 	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
 	suite("Physics",()=>{
 		test("subclass",()=>{
-			assert.fail("Test not written yet")
+			class CustomPhysics extends core.Physics {
+				physics_loop=new Subject<core.PhysicsActor>()
+			}
+			class CustomStage extends core.Stage {
+				playing=new Subject<boolean>()
+				physics=new CustomPhysics()
+				renderer=new BlandRenderer()
+				input:core.Input=new BlandInput(this)
+			}
+			assert.doesNotThrow(()=>{
+				new CustomStage()
+			})
 		})
 		suite("getsPlaying",()=>{
 			test("starting",()=>{
