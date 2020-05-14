@@ -69,6 +69,12 @@ export type PhysicsActor=(item:Collection|Sprite)=>void
 export abstract class Physics{
 	//TODO: write docstring
 	abstract physics_loop:Subject<PhysicsActor>
+	//TODO: write docstring
+	playing:Playing
+	//TODO: write docstring
+	constructor(stage:Stage|Collection){
+		this.playing=stage.playing
+	}
 }
 /**
  * An in-game object
