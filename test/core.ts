@@ -203,10 +203,56 @@ export default function() {
 		})
 		suite("can set information about sprites",()=>{
 			test("physics info",()=>{
-				assert.fail("Test not written yet")
+				class CustomPhysics extends core.Physics {
+					physics_loop=new Subject<core.PhysicsActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							stage.sprites.sprite.physicsInfo={test_data:"works"}
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					physicsInfo={}
+					renderInfo={}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new CustomPhysics(this)
+					renderer=new BlandRenderer()
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites={sprite:new CustomSprite(this)}
+				}
+				const s=new CustomStage()
+				s.play()
+				assert.deepEqual(s.sprites.sprite.physicsInfo,{test_data:"works"})
 			})
 			test("general info",()=>{
-				assert.fail("Test not written yet")
+				class CustomPhysics extends core.Physics {
+					physics_loop=new Subject<core.PhysicsActor>()
+					constructor(stage:CustomStage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							//Note that we had to be less generic to be able to do this
+							stage.sprites.sprite.test_data="works"
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					test_data?:string
+					renderInfo={}
+					physicsInfo={}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new CustomPhysics(this)
+					renderer=new BlandRenderer()
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
+				}
+				const s=new CustomStage()
+				s.play()
+				assert.equal(s.sprites.sprite.test_data,"works")
 			})
 		})
 		suite("can set information about collections",()=>{
