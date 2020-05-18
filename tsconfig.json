@@ -7,31 +7,13 @@
 		"declaration":true,
 		//"allowJs": true,
 		"outDir": "dist",
-		"strict":true,
 		//"checkJs":true,
 		"esModuleInterop":true,
 		//"sourceMap":true,//Both of these may bee a bad idea
 		//"declarationMap":true,
 
 		"importHelpers": true,
-		/*if using this, also use
-    "tslib":"^1.10.0"
-		*/
 
-		/*"allowUnreachableCode": false,
-		"allowUnusedLabels": false,
-		"alwaysStrict": true,
-		"noImplicitAny": true,
-		"noImplicitReturns": true,
-		"noImplicitThis": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"suppressExcessPropertyErrors": false,
-		"suppressImplicitAnyIndexErrors": false,
-		"strictFunctionTypes": true,
-		"strictNullChecks": true,
-		"strictPropertyInitialization": true,*/
 		"strict":true
 	},
 	"include": [

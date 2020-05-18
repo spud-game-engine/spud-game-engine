@@ -28,7 +28,7 @@
     "watch:build": "tsc --watch",
     "watch:all": "yarn watch:build & yarn watch:test",
     "watch": "yarn watch:all",
-    "build:typescript": "tsc && tsc -p tsconfig.es3.json",
+    "build:typescript": "tsc",
     "build:typedoc": "typedoc --out docs src",
     "build:all": "yarn build:typescript && yarn build:typedoc",
     "build": "yarn build:all",
