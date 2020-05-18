@@ -131,9 +131,13 @@ export abstract class Stage {
 
 	/** The reference to the renderer engine */
 	abstract renderer:Renderer
+	/** optional information on how to render this stage */
+	//renderInfo?:RenderInfo//TODO: either make a variation of these for stages specificly, &/or make them required
 
 	/** The reference to the physics engine */
 	abstract physics:Physics
+	/** optional information on how to handle physics for this stage */
+	//physicsInfo?:PhysicsInfo//TODO: either make a variation of these for stages specificly, &/or make them required
 
 	//TODO: write docstring
 	abstract playing:Playing

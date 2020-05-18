@@ -146,11 +146,59 @@ export default function() {
 			})
 		})
 		suite("can get information about collections",()=>{
+			return; //TODO should these even be reqired?
 			test("physics info",()=>{
-				assert.fail("Test not written yet")
+				assert.fail("Not finished writing yet!")
+				class CustomPhysics extends core.Physics {
+					physics_loop=new Subject<core.PhysicsActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							assert.deepEqual(stage.sprites.sprite.physicsInfo,
+										 {test_data:"works"})
+						})
+					}
+				}
+				class CustomCollection extends core.Collection {
+					/*physicsInfo={
+						test_data:"works"
+					}
+					renderInfo={}*/
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new CustomPhysics(this)
+					renderer=new BlandRenderer()
+					input:core.Input=new BlandInput(this)
+					collection:core.Collections={collection:new CustomCollection(this)}
+				}
+				new CustomStage().play()
 			})
 			test("general info",()=>{
-				assert.fail("Test not written yet")
+				assert.fail("Not finished writing yet!")
+				class CustomPhysics extends core.Physics {
+					physics_loop=new Subject<core.PhysicsActor>()
+					constructor(stage:CustomStage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							//Note that we had to be less generic to be able to do this
+							assert.equal(stage.sprites.sprite.test_data,"works")
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					test_data="works"
+					renderInfo={}
+					physicsInfo={}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new CustomPhysics(this)
+					renderer=new BlandRenderer()
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
+				}
+				new CustomStage().play()
 			})
 		})
 		suite("can set information about sprites",()=>{
@@ -162,6 +210,7 @@ export default function() {
 			})
 		})
 		suite("can set information about collections",()=>{
+			return; //TODO should these even be reqired?
 			test("physics info",()=>{
 				assert.fail("Test not written yet")
 			})
