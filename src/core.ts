@@ -6,8 +6,6 @@
 //TODO: import 'regenerator-runtime/runtime';
 import { Subject, Observable } from 'rxjs';
 
-//TODO: explain
-export type Playing=Subject<boolean>
 /**
  * The "driver" for input. Detects when the user gives input.
  *
@@ -99,6 +97,18 @@ export abstract class Sprite{
 	renderer:Renderer
 	physics:Physics
 }
+/** An object containing only sprites */
+export type Sprites={[index:string]:Sprite}
+/** An object containing only collections */
+export type Collections={[index:string]:Collection}
+/** The Push-based multicast object indicating if the game is starting or
+ * pausing.
+ * 
+ * The game should be concidered paused when no events have passed
+ * through, playing when true passes through, and paused when false passes
+ * through
+ */
+export type Playing=Subject<boolean>
 /**
  * A container for sprites, often used as a level
  * 
@@ -111,9 +121,10 @@ export abstract class Sprite{
  *  * Tell the [[Physics]] when to update. TODO:verify
  */
 export abstract class Stage {
-	/** The items stored within the collection. */
-	sprites:{[index:string]:Sprite}={}
-	collections:{[index:string]:Collection}={}
+	/** Where the sprites are to be stored **/
+	sprites:Sprites={}
+	/** Where the collections are to be stored **/
+	collections:Collections={}
 
 	/** The reference to the input handler */
 	abstract input:Input
