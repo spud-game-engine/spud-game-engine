@@ -23,7 +23,7 @@ class BlandCollection extends core.Collection{}
 class BlandStage extends core.Stage{
 	playing=new Subject<boolean>()
 	physics:core.Physics=new BlandPhysics(this)
-	renderer=new BlandRenderer()
+	renderer:core.Renderer=new BlandRenderer(this)
 	input:core.Input=new BlandInput(this)
 }
 class BlandSprite extends core.Sprite{
@@ -32,7 +32,48 @@ class BlandSprite extends core.Sprite{
 }
 
 export default function() {
-	suite("Renderer",()=>{})//All sub functions are abstract //TODO: this is a horrible reason to not write tests
+	suite("Renderer",()=>{
+		test("subclass",()=>{
+			class CustomRenderer extends core.Renderer {
+				render_loop=new Subject<core.RendererActor>()
+			}
+			class CustomStage extends core.Stage {
+				playing=new Subject<boolean>()
+				physics:core.Physics=new BlandPhysics(this)
+				renderer:core.Renderer=new CustomRenderer(this)
+				input:core.Input=new BlandInput(this)
+			}
+			assert.doesNotThrow(()=>{
+				new CustomStage()
+			})
+		})
+		suite("getsPlaying",()=>{
+			test("starting",()=>{
+				assert.fail("Not written yet!")
+			})
+			test("stopping",()=>{
+				assert.fail("Not written yet!")
+			})
+		})
+		suite("can get information about sprites",()=>{
+			test("render info",()=>{
+				assert.fail("Not written yet!")
+			})
+			test("general info",()=>{
+				assert.fail("Not written yet!")
+			})
+		})
+		//TODO: concider "can get information about collections"
+		suite("can set information about sprites",()=>{
+			test("render info",()=>{
+				assert.fail("Not written yet!")
+			})
+			test("general info",()=>{
+				assert.fail("Not written yet!")
+			})
+		})
+		//TODO: concider "can set information about collections"
+	})
 	suite("Physics",()=>{
 		test("subclass",()=>{
 			class CustomPhysics extends core.Physics {
@@ -41,7 +82,7 @@ export default function() {
 			class CustomStage extends core.Stage {
 				playing=new Subject<boolean>()
 				physics:core.Physics=new CustomPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 			}
 			assert.doesNotThrow(()=>{
@@ -63,7 +104,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 				}
 				new CustomStage().play()
@@ -83,7 +124,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 				}
 				const s=new CustomStage()
@@ -113,7 +154,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					sprites:core.Sprites={sprite:new CustomSprite(this)}
 				}
@@ -138,7 +179,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
 				}
@@ -168,7 +209,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					collection:core.Collections={collection:new CustomCollection(this)}
 				}
@@ -194,7 +235,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
 				}
@@ -219,7 +260,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					sprites:core.Sprites={sprite:new CustomSprite(this)}
 				}
@@ -246,7 +287,7 @@ export default function() {
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
 					physics:core.Physics=new CustomPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					input:core.Input=new BlandInput(this)
 					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
 				}
@@ -275,7 +316,7 @@ export default function() {
 				playing=new Subject<boolean>()
 				input:core.Input=new CustomInput(this)
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 			}
 			assert.doesNotThrow(()=>{
 				new CustomStage()
@@ -297,7 +338,7 @@ export default function() {
 					playing=new Subject<boolean>()
 					input:core.Input=new CustomInput(this)
 					physics:core.Physics=new BlandPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 				}
 				new CustomStage().play()
 				assert.isTrue(canPlay)
@@ -317,7 +358,7 @@ export default function() {
 					playing=new Subject<boolean>()
 					input:core.Input=new CustomInput(this)
 					physics:core.Physics=new BlandPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 				}
 				new CustomStage().pause()
 				assert.isTrue(canPause)
@@ -372,7 +413,7 @@ export default function() {
 					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
 					input:core.Input=new CustomInput(this)
 					physics:core.Physics=new BlandPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					constructor() {
 						super()
 						this.input.event.subscribe((e)=>{
@@ -413,7 +454,7 @@ export default function() {
 					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
 					input:core.Input=new CustomInput(this)
 					physics:core.Physics=new BlandPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					constructor() {
 						super()
 						this.input.event.subscribe((e)=>{
@@ -462,7 +503,7 @@ export default function() {
 					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
 					input:core.Input=new CustomInput(this)
 					physics:core.Physics=new BlandPhysics(this)
-					renderer=new BlandRenderer()
+					renderer:core.Renderer=new BlandRenderer(this)
 					constructor() {
 						super()
 						this.input.event.subscribe((e)=>{
@@ -496,7 +537,7 @@ export default function() {
 				assert.doesNotThrow(()=>{
 					class CustomStage extends core.Stage{
 						playing=new Subject<boolean>()
-						renderer=new BlandRenderer()
+						renderer:core.Renderer=new BlandRenderer(this)
 						physics:core.Physics=new BlandPhysics(this)
 						input:core.Input=new BlandInput(this)
 						constructor(){
@@ -511,7 +552,7 @@ export default function() {
 				assert.doesNotThrow(()=>{
 					class CustomStage extends core.Stage{
 						playing=new Subject<boolean>()
-						renderer=new BlandRenderer()
+						renderer:core.Renderer=new BlandRenderer(this)
 						physics:core.Physics=new BlandPhysics(this)
 						input:core.Input=new BlandInput(this)
 					}
@@ -533,7 +574,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
@@ -561,7 +602,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
@@ -589,7 +630,7 @@ export default function() {
 					class CustomStage extends core.Stage{
 						input:core.Input=new BlandInput(this)
 						physics:core.Physics=new BlandPhysics(this)
-						renderer=new BlandRenderer()
+						renderer:core.Renderer=new BlandRenderer(this)
 						playing=new Subject<boolean>()
 						constructor(){
 							super()
@@ -607,7 +648,7 @@ export default function() {
 					class CustomStage extends core.Stage{
 						input:core.Input=new BlandInput(this)
 						physics:core.Physics=new BlandPhysics(this)
-						renderer=new BlandRenderer()
+						renderer:core.Renderer=new BlandRenderer(this)
 						playing=new Subject<boolean>()
 						constructor(){
 							super()
@@ -831,7 +872,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
@@ -863,7 +904,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
@@ -953,7 +994,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()
@@ -982,7 +1023,7 @@ export default function() {
 			class CustomStage extends core.Stage{
 				playing=new Subject<boolean>()
 				physics:core.Physics=new BlandPhysics(this)
-				renderer=new BlandRenderer()
+				renderer:core.Renderer=new BlandRenderer(this)
 				input:core.Input=new BlandInput(this)
 				constructor(){
 					super()

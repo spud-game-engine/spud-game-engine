@@ -49,6 +49,12 @@ export type RendererActor=(item:Collection|Sprite)=>void
 export abstract class Renderer{
 	//TODO: write docstring
 	abstract render_loop:Subject<RendererActor>
+	//TODO: write docstring
+	playing:Playing
+	//TODO: write docstring
+	constructor(stage:Stage|Collection){
+		this.playing=stage.playing
+	}
 }
 /** Where Physics-specific information about a specific sprite is stored */
 export interface PhysicsInfo{}
