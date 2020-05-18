@@ -98,9 +98,9 @@ export abstract class Sprite{
 	physics:Physics
 }
 /** An object containing only sprites */
-export type Sprites={[index:string]:Sprite}
+export type Sprites<T=Sprite>={[index:string]:T}
 /** An object containing only collections */
-export type Collections={[index:string]:Collection}
+export type Collections<T=Collection>={[index:string]:T}
 /** The Push-based multicast object indicating if the game is starting or
  * pausing.
  * 

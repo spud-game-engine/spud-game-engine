@@ -120,7 +120,29 @@ export default function() {
 				new CustomStage().play()
 			})
 			test("general info",()=>{
-				assert.fail("Test not written yet")
+				class CustomPhysics extends core.Physics {
+					physics_loop=new Subject<core.PhysicsActor>()
+					constructor(stage:CustomStage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							//Note that we had to be less generic to be able to do this
+							assert.equal(stage.sprites.sprite.test_data,"works")
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					test_data="works"
+					renderInfo={}
+					physicsInfo={}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new CustomPhysics(this)
+					renderer=new BlandRenderer()
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites<CustomSprite>={sprite:new CustomSprite(this)}
+				}
+				new CustomStage().play()
 			})
 		})
 		suite("can get information about collections",()=>{
