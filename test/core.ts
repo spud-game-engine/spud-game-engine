@@ -69,7 +69,26 @@ export default function() {
 				assert.isTrue(gotEvent)
 			})
 			test("stopping",()=>{
-				assert.fail("Not written yet!")
+				let gotEvent=false
+				class CustomRenderer extends core.Renderer {
+					render_loop=new Subject<core.RendererActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							if (!val) gotEvent=true
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new CustomRenderer(this)
+					input:core.Input=new BlandInput(this)
+				}
+				const s=new CustomStage()
+				s.play()
+				s.pause()
+				assert.isTrue(gotEvent)
 			})
 		})
 		suite("can get information about sprites",()=>{
