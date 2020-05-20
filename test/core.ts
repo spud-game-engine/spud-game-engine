@@ -93,7 +93,30 @@ export default function() {
 		})
 		suite("can get information about sprites",()=>{
 			test("render info",()=>{
-				assert.fail("Not written yet!")
+				class CustomRenderer extends core.Renderer {
+					render_loop=new Subject<core.RendererActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							assert.deepEqual(stage.sprites.sprite.renderInfo,
+										 {test_data:"works"})
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					physicsInfo={}
+					renderInfo={
+						test_data:"works"
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new CustomRenderer(this)
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites={sprite:new CustomSprite(this)}
+				}
+				new CustomStage().play()
 			})
 			test("general info",()=>{
 				assert.fail("Not written yet!")
