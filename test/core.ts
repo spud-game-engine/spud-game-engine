@@ -49,7 +49,24 @@ export default function() {
 		})
 		suite("getsPlaying",()=>{
 			test("starting",()=>{
-				assert.fail("Not written yet!")
+				let gotEvent=false
+				class CustomRenderer extends core.Renderer {
+					render_loop=new Subject<core.RendererActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							if (val) gotEvent=true
+						})
+					}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new CustomRenderer(this)
+					input:core.Input=new BlandInput(this)
+				}
+				new CustomStage().play()
+				assert.isTrue(gotEvent)
 			})
 			test("stopping",()=>{
 				assert.fail("Not written yet!")
