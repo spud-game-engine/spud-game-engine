@@ -657,6 +657,31 @@ export default function() {
 				assert.equal(numberOfContinuedEvents,4)
 			})
 		})
+		suite("device management",()=>{
+			test("new device",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("removed device",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("device messages are distinguashed",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("action mapping",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
+		suite("sends action events",()=>{
+			test("new action",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("middle action",()=>{
+				assert.fail("Test not written yet")
+			})
+			test("last action",()=>{
+				assert.fail("Test not written yet")
+			})
+		})
 	})
 	suite("Stage",()=>{
 		suite("constructor",()=>{
