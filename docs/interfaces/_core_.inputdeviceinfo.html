@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>InputInfo | spud-game-engine - v0.0.0</title>
+	<title>InputDeviceInfo | spud-game-engine - v0.0.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,21 +59,28 @@
 					<a href="../modules/_core_.html">&quot;core&quot;</a>
 				</li>
 				<li>
-					<a href="_core_.inputinfo.html">InputInfo</a>
+					<a href="_core_.inputdeviceinfo.html">InputDeviceInfo</a>
 				</li>
 			</ul>
-			<h1>Interface InputInfo</h1>
+			<h1>Interface InputDeviceInfo</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Information about a new device being registered</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">InputInfo</span>
+						<span class="target">InputDeviceInfo</span>
 					</li>
 				</ul>
 			</section>
@@ -84,9 +91,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputinfo.html#device" class="tsd-kind-icon">device</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputinfo.html#key" class="tsd-kind-icon">key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputinfo.html#value" class="tsd-kind-icon">value</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputdeviceinfo.html#metadata" class="tsd-kind-icon">metadata</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputdeviceinfo.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_.inputdeviceinfo.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,32 +102,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="device" class="tsd-anchor"></a>
-					<h3>device</h3>
-					<div class="tsd-signature tsd-kind-icon">device<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="metadata" class="tsd-anchor"></a>
+					<h3>metadata</h3>
+					<div class="tsd-signature tsd-kind-icon">metadata<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/4973b04/src/core.ts#L24">core.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0593718/src/core.ts#L36">core.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="key" class="tsd-anchor"></a>
-					<h3>key</h3>
-					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/4973b04/src/core.ts#L26">core.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0593718/src/core.ts#L35">core.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="value" class="tsd-anchor"></a>
-					<h3>value</h3>
-					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"key"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"gamepad"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"pointer"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/4973b04/src/core.ts#L28">core.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/spud-game-engine/spud-game-engine/blob/0593718/src/core.ts#L37">core.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -160,21 +167,24 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_core_.inputinfo.html" class="tsd-kind-icon">Input<wbr>Info</a>
+						<a href="_core_.inputdeviceinfo.html" class="tsd-kind-icon">Input<wbr>Device<wbr>Info</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_.inputinfo.html#device" class="tsd-kind-icon">device</a>
+								<a href="_core_.inputdeviceinfo.html#metadata" class="tsd-kind-icon">metadata</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_.inputinfo.html#key" class="tsd-kind-icon">key</a>
+								<a href="_core_.inputdeviceinfo.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_.inputinfo.html#value" class="tsd-kind-icon">value</a>
+								<a href="_core_.inputdeviceinfo.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_core_.inputeventinfo.html" class="tsd-kind-icon">Input<wbr>Event<wbr>Info</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_core_.physicsinfo.html" class="tsd-kind-icon">Physics<wbr>Info</a>
 					</li>
