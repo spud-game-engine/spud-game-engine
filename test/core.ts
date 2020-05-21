@@ -17,7 +17,8 @@ class BlandPhysics extends core.Physics{
 	physics_loop=new Subject<core.PhysicsActor>()
 }
 class BlandInput extends core.Input{
-	event=new Subject<Observable<core.InputInfo>>()
+	event=new Subject<Observable<core.InputEventInfo>>()
+	connections=new Subject<core.InputDeviceInfo>()
 }
 class BlandCollection extends core.Collection{}
 class BlandStage extends core.Stage{
@@ -437,7 +438,8 @@ export default function() {
 		test("subclass",()=>{
 			//TODO: improove this test
 			class CustomInput extends core.Input{
-				event=new Subject<Observable<core.InputInfo>>()
+				event=new Subject<Observable<core.InputEventInfo>>()
+				connections=new Subject<core.InputDeviceInfo>()
 			}
 			class CustomStage extends core.Stage {
 				playing=new Subject<boolean>()
@@ -453,7 +455,8 @@ export default function() {
 			test("starting",()=>{
 				let canPlay:boolean=false
 				class CustomInput extends core.Input {
-					event=new Subject<Observable<core.InputInfo>>()
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
 					constructor(stage:core.Stage){
 						super(stage)
 						this.playing.subscribe((val:boolean)=>{
@@ -473,7 +476,8 @@ export default function() {
 			test("stopping",()=>{
 				let canPause:boolean=false
 				class CustomInput extends core.Input {
-					event=new Subject<Observable<core.InputInfo>>()
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
 					constructor(stage:core.Stage){
 						super(stage)
 						this.playing.subscribe((val:boolean)=>{
@@ -520,7 +524,8 @@ export default function() {
 			test("event start",()=>{
 				let receivedEvent=0
 				class CustomInput extends core.Input{
-					event=new Subject<Observable<core.InputInfo>>()
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
 					constructor(stage:core.Stage) {
 						super(stage)
 						//See comment in CustomStage below
@@ -558,7 +563,8 @@ export default function() {
 				let receivedFirstEvent=0,
 					numberOfContinuedEvents=0;
 				class CustomInput extends core.Input{
-					event=new Subject<Observable<core.InputInfo>>()
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
 					constructor(stage:core.Stage) {
 						super(stage)
 						//See comment in CustomStage below
@@ -606,7 +612,8 @@ export default function() {
 					receivedLastEvent=0,
 					numberOfContinuedEvents=0;
 				class CustomInput extends core.Input{
-					event=new Subject<Observable<core.InputInfo>>()
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
 					constructor(stage:core.Stage) {
 						super(stage)
 						//See comment in CustomStage below
@@ -659,7 +666,47 @@ export default function() {
 		})
 		suite("device management",()=>{
 			test("new device",()=>{
-				assert.fail("Test not written yet")
+				let receivedEvent=0
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
+							this.connections.next({
+								name:"Keyboard",
+								metadata:"default keyboard",
+								type:"key",
+							})
+						})
+					}
+				}
+				let value:core.InputDeviceInfo={
+					name:"",
+					metadata:"",
+					type:"gamepad",
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new BlandRenderer(this)
+					constructor() {
+						super()
+						this.input.connections.subscribe((e)=>{
+							value=e
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.deepEqual(value,{
+					name:"Keyboard",
+					metadata:"default keyboard",
+					type:"key",
+				})
 			})
 			test("removed device",()=>{
 				assert.fail("Test not written yet")

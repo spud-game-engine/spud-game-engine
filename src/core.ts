@@ -9,23 +9,32 @@ export abstract class Input{
 	/** Inputs must have a subject where the passed observable completes at the end
 	 *  of the input event
 	 */
-	abstract event:Subject<Observable<InputInfo>>
+	abstract event:Subject<Observable<InputEventInfo>>
 	//TODO: explain
 	playing:Playing
 	//TODO: explain //TODO: evaluate optionability
 	constructor(stage:Stage|Collection){
 		this.playing=stage.playing
 	}
-	//TODO: observable to handle new devices
+	/**
+	 * Observable to handle new devices
+	 */
+	abstract connections:Subject<InputDeviceInfo>
 }
 //TODO: explain
-export interface InputInfo{//TODO: adjust to better fit needs later
+export interface InputEventInfo{
 	//TODO: explain
 	device:string|number|Array<string|number>
 	//TODO: explain
 	key:number
 	//TODO: explain
 	value:number|Array<number>
+}
+/** Information about a new device being registered */
+export interface InputDeviceInfo{
+	name:string
+	metadata:string
+	type:"key"|"gamepad"|"pointer"
 }
 /** Where render-specific information about a sprite is stored */
 export interface RenderInfo{}
