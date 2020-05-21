@@ -678,6 +678,7 @@ export default function() {
 								name:"Keyboard",
 								metadata:"default keyboard",
 								type:"key",
+								status:"add",
 							})
 						})
 					}
@@ -686,6 +687,7 @@ export default function() {
 					name:"",
 					metadata:"",
 					type:"gamepad",
+					status:"remove",
 				}
 				class CustomStage extends core.Stage {
 					playing=new Subject<boolean>()
@@ -706,10 +708,114 @@ export default function() {
 					name:"Keyboard",
 					metadata:"default keyboard",
 					type:"key",
+					status:"add",
+				})
+			})
+			test("update device",()=>{
+				let receivedEvent=0
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
+							this.connections.next({
+								name:"Keyboard",
+								metadata:"default keyboard",
+								type:"key",
+								status:"add",
+							})
+							this.connections.next({
+								name:"Keyboard",
+								metadata:"default keyboard",
+								type:"key",
+								status:"update",
+							})
+							this.connections.complete()
+						})
+					}
+				}
+				let value:core.InputDeviceInfo={
+					name:"",
+					metadata:"",
+					type:"gamepad",
+					status:"add",
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new BlandRenderer(this)
+					constructor() {
+						super()
+						this.input.connections.subscribe((e)=>{
+							value=e
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.deepEqual(value,{
+					name:"Keyboard",
+					metadata:"default keyboard",
+					type:"key",
+					status:"update",
 				})
 			})
 			test("removed device",()=>{
-				assert.fail("Test not written yet")
+				let receivedEvent=0
+				class CustomInput extends core.Input{
+					event=new Subject<Observable<core.InputEventInfo>>()
+					connections=new Subject<core.InputDeviceInfo>()
+					constructor(stage:core.Stage) {
+						super(stage)
+						//See comment in CustomStage below
+						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
+							this.connections.next({
+								name:"Keyboard",
+								metadata:"default keyboard",
+								type:"key",
+								status:"add",
+							})
+							this.connections.next({
+								name:"Keyboard",
+								metadata:"default keyboard",
+								type:"key",
+								status:"remove",
+							})
+							this.connections.complete()
+						})
+					}
+				}
+				let value:core.InputDeviceInfo={
+					name:"",
+					metadata:"",
+					type:"gamepad",
+					status:"add",
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					//Because this is set outside the constructor, keep in mind that it is called before the contents of the constructor
+					input:core.Input=new CustomInput(this)
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new BlandRenderer(this)
+					constructor() {
+						super()
+						this.input.connections.subscribe((e)=>{
+							value=e
+						})
+						this.play()
+					}
+				}
+				new CustomStage()
+				assert.deepEqual(value,{
+					name:"Keyboard",
+					metadata:"default keyboard",
+					type:"key",
+					status:"remove",
+				})
 			})
 			test("device messages are distinguashed",()=>{
 				assert.fail("Test not written yet")

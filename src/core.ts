@@ -35,6 +35,7 @@ export interface InputDeviceInfo{
 	name:string
 	metadata:string
 	type:"key"|"gamepad"|"pointer"
+	status:"add"|"remove"|"update"
 }
 /** Where render-specific information about a sprite is stored */
 export interface RenderInfo{}
