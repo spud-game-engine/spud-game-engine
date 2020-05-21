@@ -147,7 +147,29 @@ export default function() {
 		//TODO: concider "can get information about collections"
 		suite("can set information about sprites",()=>{
 			test("render info",()=>{
-				assert.fail("Not written yet!")
+				class CustomRenderer extends core.Renderer {
+					render_loop=new Subject<core.RendererActor>()
+					constructor(stage:core.Stage){
+						super(stage)
+						this.playing.subscribe((val:boolean)=>{
+							stage.sprites.sprite.physicsInfo={test_data:"works"}
+						})
+					}
+				}
+				class CustomSprite extends core.Sprite {
+					physicsInfo={}
+					renderInfo={}
+				}
+				class CustomStage extends core.Stage {
+					playing=new Subject<boolean>()
+					physics:core.Physics=new BlandPhysics(this)
+					renderer:core.Renderer=new CustomRenderer(this)
+					input:core.Input=new BlandInput(this)
+					sprites:core.Sprites={sprite:new CustomSprite(this)}
+				}
+				const s=new CustomStage()
+				s.play()
+				assert.deepEqual(s.sprites.sprite.physicsInfo,{test_data:"works"})
 			})
 			test("general info",()=>{
 				assert.fail("Not written yet!")
