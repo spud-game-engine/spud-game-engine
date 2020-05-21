@@ -1,17 +1,9 @@
-//import interval from 'interval-promise'
-
-//Polyfills. According to corejs's doc, this is how Babel does their polyfills
-//From testing, it seems that `tsc` doesn't do this.
-//TODO: import 'core-js/stable';
 //TODO: import 'regenerator-runtime/runtime';
 import { Subject, Observable } from 'rxjs';
+//TODO: validate all inputs using that library
 
 /**
  * The "driver" for input. Detects when the user gives input.
- *
- * In charge of these things:
- *
- *  * Listening for input from all players (and distinguishing them) TODO:verify
  */
 export abstract class Input{
 	/** Inputs must have a subject where the passed observable completes at the end
@@ -41,10 +33,6 @@ export interface RenderInfo{}
 export type RendererActor=(item:Collection|Sprite)=>void
 /**
  * Abstract renderer engine class
- *
- * In charge of these things:
- *
- *  * Show sprites animating on "screen" (whatever screen that may be) TODO:verify
  */
 export abstract class Renderer{
 	//TODO: write docstring
@@ -62,13 +50,6 @@ export interface PhysicsInfo{}
 export type PhysicsActor=(item:Collection|Sprite)=>void
 /**
  * Abstract physics engine class.
- *
- * In charge of these things:
- *
- *  * Allow for sprites to interact with oneanother TODO:verify
- *  * Allow for sprites to be interacted upon (like by an event, for example) TODO:verify
- *  * Check that recent interactions are reflected in shared state variables on
- * the [[Sprite]] or [[Collection]] objects themselves. TODO:verify
  */
 export abstract class Physics{
 	//TODO: write docstring
@@ -82,16 +63,6 @@ export abstract class Physics{
 }
 /**
  * An in-game object
- * 
- * In charge of these things:
- * 
- *  * Tell the [[Renderer]] and [[Physics]] to update itself. TODO:verify
- *  * Store information unique to physics (such as the hitbox) in
- * [[PhysicsInfo]] TODO:verify
- *  * Store information unique to rendering (such as image resource) in
- * [[RenderInfo]] TODO:verify
- *  * Directly store information shared between both [[Physics]] and
- * [[Renderer]] (such as location) TODO:verify
  */
 export abstract class Sprite{ 
 	constructor(collection:Collection){
@@ -117,14 +88,6 @@ export type Collections<T=Collection>={[index:string]:T}
 export type Playing=Subject<boolean>
 /**
  * A container for sprites, often used as a level
- * 
- * In charge of these things:
- * 
- *  * Tell the inputs when to play or pause. TODO:verify
- *  * Allow for input events to trigger changes in the contained sprites and
- * constructors inherited from [[Collection]] TODO:verify
- *  * Tell the [[Renderer]] when to render. TODO:verify
- *  * Tell the [[Physics]] when to update. TODO:verify
  */
 export abstract class Stage {
 	/** Where the sprites are to be stored **/
@@ -161,17 +124,6 @@ export abstract class Stage {
 //*/
 /**
  * A collection of [[Sprite]]s and [[Collection]]s
- *
- * In charge of these things:
- * 
- *  * Holding other instances of [[Collection]] TODO:verify
- *  * Holding instances of [[Sprite]] TODO:verify
- *  * Pass down the message of when the [[Renderer]] was told to render. TODO:verify
- *  * Pass down the message of when [[Physics]] was told to update. TODO:verify
- *  * Tell the [[Renderer]] when all instances of [[Sprite]] that this directly
- * or indirectly mannages are rendered. TODO:verify
- *  * Tell the [[Physics]] when all instances of [[Sprite]] that this directly
- * or indirectly mannages have been updated. TODO:verify
  */
 export abstract class Collection extends Stage{ 
 	input:Input
