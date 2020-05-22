@@ -496,31 +496,6 @@ export default function() {
 			})
 		})
 		suite("sends input events",()=>{
-			/*test("basic",()=>{
-				return assert.fail("Test should be reconcidered");
-				let receivedEvent=false
-				class CustomInput extends core.Input{
-					event=new Subject<Observable<core.InputInfo>>()
-					constructor(stage:core.Stage) {
-						super(stage)
-						this.event.next()
-					}
-				}
-				class CustomStage extends core.Stage {
-					playing=new Subject<boolean>()
-					input:core.Input=new CustomInput(this)
-					physics=new BlandPhysics()
-					renderer=new BlandRenderer()
-					constructor() {
-						super()
-						this.input.event.subscribe(()=>{
-							receivedEvent=true
-						})
-					}
-				}
-				new CustomStage()
-				assert.isTrue(receivedEvent)
-			})*/
 			test("event start",()=>{
 				let receivedEvent=0
 				class CustomInput extends core.Input{
@@ -532,7 +507,7 @@ export default function() {
 						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
 							this.event.next(new Observable((s)=>{
 								s.next({
-									device:0,
+									device_id:0,
 									key:0,
 									value:0
 								})
@@ -573,7 +548,7 @@ export default function() {
 							this.event.next(new Observable((s)=>{
 								for(let i=0;i <5;i++){
 									s.next({
-										device:0,
+										device_id:0,
 										key:0,
 										value:0
 									})
@@ -622,7 +597,7 @@ export default function() {
 							this.event.next(new Observable((s)=>{
 								for(let i=0;i <5;i++){
 									s.next({
-										device:0,
+										device_id:0,
 										key:0,
 										value:0
 									})
@@ -666,7 +641,6 @@ export default function() {
 		})
 		suite("device management",()=>{
 			test("new device",()=>{
-				let receivedEvent=0
 				class CustomInput extends core.Input{
 					event=new Subject<Observable<core.InputEventInfo>>()
 					connections=new Subject<core.InputDeviceInfo>()
@@ -676,6 +650,7 @@ export default function() {
 						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
 							this.connections.next({
 								name:"Keyboard",
+								device_id:0,
 								metadata:"default keyboard",
 								type:"key",
 								status:"add",
@@ -685,6 +660,7 @@ export default function() {
 				}
 				let value:core.InputDeviceInfo={
 					name:"",
+					device_id:1,
 					metadata:"",
 					type:"gamepad",
 					status:"remove",
@@ -706,13 +682,13 @@ export default function() {
 				new CustomStage()
 				assert.deepEqual(value,{
 					name:"Keyboard",
+					device_id:0,
 					metadata:"default keyboard",
 					type:"key",
 					status:"add",
 				})
 			})
 			test("update device",()=>{
-				let receivedEvent=0
 				class CustomInput extends core.Input{
 					event=new Subject<Observable<core.InputEventInfo>>()
 					connections=new Subject<core.InputDeviceInfo>()
@@ -722,12 +698,14 @@ export default function() {
 						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
 							this.connections.next({
 								name:"Keyboard",
+								device_id:0,
 								metadata:"default keyboard",
 								type:"key",
 								status:"add",
 							})
 							this.connections.next({
 								name:"Keyboard",
+								device_id:0,
 								metadata:"default keyboard",
 								type:"key",
 								status:"update",
@@ -738,6 +716,7 @@ export default function() {
 				}
 				let value:core.InputDeviceInfo={
 					name:"",
+					device_id:0,
 					metadata:"",
 					type:"gamepad",
 					status:"add",
@@ -759,13 +738,13 @@ export default function() {
 				new CustomStage()
 				assert.deepEqual(value,{
 					name:"Keyboard",
+					device_id:0,
 					metadata:"default keyboard",
 					type:"key",
 					status:"update",
 				})
 			})
 			test("removed device",()=>{
-				let receivedEvent=0
 				class CustomInput extends core.Input{
 					event=new Subject<Observable<core.InputEventInfo>>()
 					connections=new Subject<core.InputDeviceInfo>()
@@ -775,12 +754,14 @@ export default function() {
 						this.playing.pipe(filter(x=>x)).subscribe((val:boolean)=>{
 							this.connections.next({
 								name:"Keyboard",
+								device_id:0,
 								metadata:"default keyboard",
 								type:"key",
 								status:"add",
 							})
 							this.connections.next({
 								name:"Keyboard",
+								device_id:0,
 								metadata:"default keyboard",
 								type:"key",
 								status:"remove",
@@ -791,6 +772,7 @@ export default function() {
 				}
 				let value:core.InputDeviceInfo={
 					name:"",
+					device_id:0,
 					metadata:"",
 					type:"gamepad",
 					status:"add",
@@ -812,16 +794,11 @@ export default function() {
 				new CustomStage()
 				assert.deepEqual(value,{
 					name:"Keyboard",
+					device_id:0,
 					metadata:"default keyboard",
 					type:"key",
 					status:"remove",
 				})
-			})
-			test("device messages are distinguashed",()=>{
-				assert.fail("Test not written yet")
-			})
-			test("action mapping",()=>{
-				assert.fail("Test not written yet")
 			})
 		})
 		suite("sends action events",()=>{

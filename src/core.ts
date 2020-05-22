@@ -10,9 +10,8 @@ export abstract class Input{
 	 *  of the input event
 	 */
 	abstract event:Subject<Observable<InputEventInfo>>
-	//TODO: explain
+	/** A refernce to the [Playing] subscription */
 	playing:Playing
-	//TODO: explain //TODO: evaluate optionability
 	constructor(stage:Stage|Collection){
 		this.playing=stage.playing
 	}
@@ -23,15 +22,22 @@ export abstract class Input{
 }
 //TODO: explain
 export interface InputEventInfo{
-	//TODO: explain
-	device:string|number|Array<string|number>
-	//TODO: explain
+	/** The unique input device ID number */
+	device_id:number
+	/** The identifier for the key */
 	key:number
-	//TODO: explain
-	value:number|Array<number>
+	/**
+	 * The current value of the button.
+	 *
+	 * This is especially designed for things such as joysticks or PlayStation
+	 * buttons.
+	 */
+	value:number
 }
 /** Information about a new device being registered */
 export interface InputDeviceInfo{
+	/** The unique input device ID number */
+	device_id:number
 	name:string
 	metadata:string
 	type:"key"|"gamepad"|"pointer"
